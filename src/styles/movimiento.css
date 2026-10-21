@@ -1,0 +1,117 @@
+/* Movimiento. Solo transform y opacity, curvas suaves, nada que tape el contenido.
+   Todo vive dentro de «prefers-reduced-motion: no-preference»: con «reducir movimiento» no se anima nada.
+   Las apariciones al hacer scroll usan animation-timeline (sin JavaScript); donde no hay soporte, el contenido
+   se ve quieto desde el principio. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+
+  /* ── Respuesta al toque ──────────────────────────── */
+
+  .boton, .wa, .flecha, .chip, .segmentado label, .pestanas button, .portada-controles button {
+    transition-property: background-color, border-color, color, transform, box-shadow;
+    transition-duration: var(--m-rapido);
+    transition-timing-function: var(--m-curva);
+  }
+  .boton:active, .wa:active, .chip:active, .pestanas button:active, .portada-controles button:active { transform: scale(0.97); }
+
+  .wa svg, .header-wa svg, .flotante svg { transition: transform 260ms var(--m-curva); }
+  .wa:hover svg, .header-wa:hover svg, .flotante:hover svg { transform: rotate(-10deg) scale(1.06); }
+
+  .marca-texto::before { transition: transform 400ms var(--m-curva); }
+  .marca-agencia:hover .marca-texto::before { transform: rotate(90deg); }
+
+  /* ── Portada: un solo momento al cargar ──────────── */
+
+  .slide:first-child .slide-foto { animation: asentar 1600ms var(--m-curva) both; }
+  .slide-imagen::after { transform-origin: left; animation: dibujar 900ms var(--m-curva) 300ms both; }
+  .slide.activa .slide-texto > * { animation: subir-suave 700ms var(--m-curva) both; }
+  .slide.activa .slide-texto > :nth-child(2) { animation-delay: 80ms; }
+  .slide.activa .slide-texto > :nth-child(3) { animation-delay: 160ms; }
+  .slide.activa .slide-texto > :nth-child(4) { animation-delay: 240ms; }
+
+  /* Encabezados de página y panel de la ficha: entrada escalonada al cargar. */
+  .cabecera-pagina .contenedor > * { animation: subir-suave 650ms var(--m-curva) both; }
+  .cabecera-pagina .contenedor > :nth-child(2) { animation-delay: 70ms; }
+  .cabecera-pagina .contenedor > :nth-child(3) { animation-delay: 140ms; }
+  .cabecera-pagina h1::after { transform-origin: center; animation: dibujar 700ms var(--m-curva) 350ms both; }
+
+  .ficha-panel > * { animation: subir-suave 600ms var(--m-curva) both; }
+  .ficha-panel > :nth-child(2) { animation-delay: 60ms; }
+  .ficha-panel > :nth-child(3) { animation-delay: 120ms; }
+  .ficha-panel > :nth-child(4) { animation-delay: 180ms; }
+  .ficha-panel > :nth-child(5) { animation-delay: 240ms; }
+  .ficha-panel > :nth-child(n + 6) { animation-delay: 300ms; }
+  .cartel--grande .cartel-precio { animation: subir-suave 700ms var(--m-curva) 200ms both; }
+
+  /* ── Detalles vivos ──────────────────────────────── */
+
+  .horario-estado[data-abierto='true']::before { animation: latido 2.4s ease-in-out infinite; }
+
+  .flotante { animation: aparecer-escala 500ms var(--m-curva) 900ms both; }
+
+  .error:not([hidden]) { animation: subir-suave 260ms var(--m-curva) both; }
+  .aviso-estado { animation: subir-suave 600ms var(--m-curva) 300ms both; }
+
+  .visor-pista img { animation: fundido 400ms var(--m-curva) both; }
+
+  /* ── Al hacer scroll ─────────────────────────────── */
+
+  @supports (animation-timeline: view()) {
+    .titulo-seccion,
+    .buscador,
+    .marcas,
+    .servicio,
+    .visita > *,
+    .bloque,
+    .ficha-detalle-lado > *,
+    .dos-columnas > *,
+    .columna,
+    .pasos li,
+    .testimonio {
+      animation: revelar linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+
+    /* Tarjetas: un leve escalonado por columna, atado al scroll. */
+    .grilla-tarjetas > *, .grilla-stock > *, .carrusel > * {
+      animation: revelar linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+    .grilla-tarjetas > :nth-child(4n + 2), .grilla-stock > :nth-child(3n + 2) { animation-range: entry 6% entry 66%; }
+    .grilla-tarjetas > :nth-child(4n + 3), .grilla-stock > :nth-child(3n) { animation-range: entry 12% entry 72%; }
+    .grilla-tarjetas > :nth-child(4n) { animation-range: entry 18% entry 78%; }
+
+    .titulo-seccion h2::after,
+    .visita h2::after,
+    .bloque h2::after {
+      transform-origin: left;
+      animation: dibujar linear both;
+      animation-timeline: view();
+      animation-range: entry 30% cover 40%;
+    }
+    .titulo-seccion h2::after { transform-origin: center; }
+
+    /* La foto de cada servicio se acerca apenas mientras cruza la pantalla. */
+    .servicio picture { overflow: hidden; }
+    .servicio .foto {
+      animation: acercar linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
+@keyframes subir-suave { from { opacity: 0; transform: translateY(14px); } }
+@keyframes revelar { from { opacity: 0; transform: translateY(28px); } }
+@keyframes asentar { from { transform: scale(1.06); } }
+@keyframes dibujar { from { transform: scaleX(0); } }
+@keyframes fundido { from { opacity: 0; } }
+@keyframes aparecer-escala { from { opacity: 0; transform: scale(0.6); } }
+@keyframes acercar { from { transform: scale(1.08); } to { transform: scale(1); } }
+@keyframes latido {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--wa), transparent 45%); }
+  60% { box-shadow: 0 0 0 6px color-mix(in oklab, var(--wa), transparent 100%); }
+}

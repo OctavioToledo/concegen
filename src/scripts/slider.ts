@@ -19,6 +19,8 @@ export function iniciarSlider() {
     if (i === actual) return;
     actual = i;
     puntos.forEach((p, j) => p.setAttribute('aria-current', String(j === i)));
+    // La diapositiva activa vuelve a presentar su texto (ver movimiento.css).
+    [...pista.children].forEach((s, j) => s.classList.toggle('activa', j === i));
   }, { passive: true });
 
   puntos.forEach((p) => p.addEventListener('click', () => irA(Number(p.dataset.ir))));

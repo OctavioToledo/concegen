@@ -19,7 +19,7 @@ const SIZES = '100vw';
   <section class="portada" aria-roledescription="carrusel" aria-label="Autos destacados" data-slider>
     <div class="portada-pista" data-pista>
       {slides.map((a, i) => (
-        <article class="slide" aria-roledescription="diapositiva" aria-label={`${i + 1} de ${slides.length}: ${nombre(a)}`} id={`slide-${i}`}>
+        <article class:list={['slide', i === 0 && 'activa']} aria-roledescription="diapositiva" aria-label={`${i + 1} de ${slides.length}: ${nombre(a)}`} id={`slide-${i}`}>
           <a href={`/autos/${a.slug}`} class="slide-imagen" tabindex="-1" aria-label={`${nombre(a)}, ver esta unidad`}>
             <Foto src={fotoAuto(a.fotos[0].src)!} alt="" sizes={SIZES} proporcion="libre" prioridad={i === 0} anchos={[480, 768, 1080, 1440, 1920]} class="slide-foto" />
           </a>

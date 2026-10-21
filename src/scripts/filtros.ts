@@ -4,6 +4,7 @@
 import { precio as formatoPrecio, precioCorto, numero } from '../lib/formato';
 import { mensajes } from '../config/mensajes';
 import { whatsappUrl } from '../lib/whatsapp';
+import { cascada } from './cascada';
 
 type Moneda = 'ARS' | 'USD';
 type Orden = '' | 'precio-asc' | 'precio-desc' | 'nuevos' | 'km';
@@ -250,7 +251,7 @@ const autos = (n: number) => (n === 1 ? '1 auto' : `${n} autos`);
 
 let estado = desdeUrl();
 
-function aplicar(e: Estado, { url = true } = {}) {
+function aplicar(e: Estado, { url = true, animar = true } = {}) {
   estado = e;
 
   let visibles = 0;
@@ -264,7 +265,9 @@ function aplicar(e: Estado, { url = true } = {}) {
   if (ordenadas.some((t, i) => grilla.children[i] !== t)) grilla.append(...ordenadas);
 
   // Las dos primeras visibles cargan de inmediato.
-  ordenadas.filter((t) => !t.hidden).slice(0, 2).forEach((t) => t.querySelector('img')?.setAttribute('loading', 'eager'));
+  const enPantalla = ordenadas.filter((t) => !t.hidden);
+  enPantalla.slice(0, 2).forEach((t) => t.querySelector('img')?.setAttribute('loading', 'eager'));
+  if (animar) cascada(enPantalla, 9);
 
   const texto = autos(visibles);
   $('#stock-cantidad')!.textContent = texto;
@@ -340,6 +343,6 @@ $$('[data-limpiar]').forEach((b) => b.addEventListener('click', limpiar));
 
 // Primera pasada: aplica los filtros de la URL antes de mostrar el stock.
 aFormulario(estado);
-aplicar(estado, { url: false });
+aplicar(estado, { url: false, animar: false });
 try { sessionStorage.setItem('busqueda', location.search); } catch { /* modo privado */ }
 document.documentElement.classList.remove('filtrando');

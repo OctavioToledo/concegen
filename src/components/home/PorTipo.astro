@@ -32,6 +32,8 @@ const MAX = 8;
 </section>
 
 <script>
+  import { cascada } from '../../scripts/cascada';
+
   document.querySelectorAll<HTMLElement>('[data-pestanas]').forEach((seccion) => {
     const max = Number(seccion.dataset.max ?? 8);
     const pestanas = [...seccion.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
@@ -45,7 +47,9 @@ const MAX = 8;
         p.tabIndex = p === b ? 0 : -1;
       });
       const coinciden = items.filter((i) => !tipo || i.dataset.carr === tipo);
-      items.forEach((i) => (i.hidden = !coinciden.slice(0, max).includes(i)));
+      const visibles = coinciden.slice(0, max);
+      items.forEach((i) => (i.hidden = !visibles.includes(i)));
+      cascada(visibles);
       const n = coinciden.length;
       const nombre = b.firstChild?.textContent?.trim().toLowerCase() ?? '';
       ver.href = tipo ? `/stock?carr=${tipo}` : '/stock';
