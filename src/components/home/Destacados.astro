@@ -1,0 +1,18 @@
+---
+import { destacados } from '../../lib/stock';
+import { SIZES } from '../../lib/fotos';
+import TarjetaAuto from '../auto/TarjetaAuto.astro';
+
+const autos = destacados();
+---
+{autos.length > 0 && (
+  <section class="contenedor seccion" aria-labelledby="destacados-titulo">
+    <div class="cabecera-seccion">
+      <h2 id="destacados-titulo">Destacados</h2>
+      <a href="/stock" class="chico">Ver todo el stock</a>
+    </div>
+    <div class="carrusel">
+      {autos.map((a) => <TarjetaAuto auto={a} sizes={SIZES.carrusel} />)}
+    </div>
+  </section>
+)}

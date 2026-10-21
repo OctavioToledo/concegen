@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import Foto from '../components/ui/Foto.astro';
+import Horario from '../components/sitio/Horario.astro';
+import Mapa from '../components/sitio/Mapa.astro';
+import { agencia } from '../lib/agencia';
+import { fotoAgencia } from '../lib/fotos';
+import { jsonLdAgencia } from '../lib/seo';
+
+const foto = agencia.laAgencia.fotoLocal ? fotoAgencia(agencia.laAgencia.fotoLocal) : undefined;
+---
+<Base titulo="La agencia" descripcion={`${agencia.nombre}: autos 0 km y usados en ${agencia.ciudad}.`} jsonLd={jsonLdAgencia()}>
+  <div class="contenedor pagina-cabecera dos-columnas">
+    <div class="pila">
+      <h1>{agencia.nombre}</h1>
+      {agencia.laAgencia.historia.map((p) => <p>{p}</p>)}
+    </div>
+    {foto && <Foto src={foto} alt={`Frente de ${agencia.nombre}`} sizes="(min-width: 900px) 45vw, 100vw" prioridad proporcion="43" />}
+  </div>
+
+  <div class="contenedor seccion dos-columnas">
+    <section class="pila" aria-labelledby="donde-titulo">
+      <h2 id="donde-titulo">Dónde estamos</h2>
+      <p>{agencia.contacto.direccion}</p>
+      <Horario />
+      <a class="boton" style="justify-self:start" href={agencia.contacto.mapsUrl} target="_blank" rel="noopener">Cómo llegar</a>
+    </section>
+    <Mapa />
+  </div>
+</Base>

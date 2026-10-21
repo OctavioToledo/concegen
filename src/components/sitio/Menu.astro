@@ -1,0 +1,22 @@
+---
+// Menú del celular: panel a pantalla completa con los destinos, el teléfono y el horario.
+import { agencia, destinos } from '../../lib/agencia';
+import Icono from '../ui/Icono.astro';
+import Horario from './Horario.astro';
+---
+<dialog id="menu" class="menu" aria-label="Menú">
+  <div class="contenedor header-fila">
+    <a href="/" class="marca-agencia ancho">{agencia.nombre}</a>
+    <button type="button" class="cerrar" data-cerrar aria-label="Cerrar menú"><Icono nombre="cerrar" /></button>
+  </div>
+  <nav class="contenedor" aria-label="Menú">
+    <ul class="menu-lista">
+      <li><a href="/">Inicio</a></li>
+      {destinos().map((d) => <li><a href={d.href}>{d.texto}</a></li>)}
+    </ul>
+  </nav>
+  <div class="contenedor pila" style="margin-top: var(--e-6)">
+    <p><a href={`tel:${agencia.contacto.telefono.replace(/\D/g, '')}`}>Llamar al {agencia.contacto.telefono}</a></p>
+    <Horario compacto />
+  </div>
+</dialog>

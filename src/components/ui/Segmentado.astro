@@ -1,0 +1,21 @@
+---
+// Control segmentado: una sola opción (radio).
+interface Props {
+  name: string;
+  rotulo: string;
+  opciones: { valor: string; texto: string }[];
+  valor?: string;
+}
+const { name, rotulo, opciones, valor = '' } = Astro.props;
+---
+<fieldset class="pila-chica">
+  <legend class="grupo-rotulo">{rotulo}</legend>
+  <div class="segmentado">
+    {opciones.map((o) => (
+      <label>
+        <input type="radio" name={name} value={o.valor} checked={o.valor === valor} />
+        {o.texto}
+      </label>
+    ))}
+  </div>
+</fieldset>

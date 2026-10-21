@@ -1,0 +1,14 @@
+---
+// Un auto que no está en el stock también es una consulta.
+import { agencia } from '../../lib/agencia';
+import { whatsappUrl } from '../../lib/whatsapp';
+import { mensajes } from '../../config/mensajes';
+import BotonWhatsApp from '../ui/BotonWhatsApp.astro';
+
+const href = whatsappUrl(agencia.contacto.whatsapp, mensajes.stockVacio({ filtros: 'un auto' }));
+---
+<div id="vacio" class="vacio" hidden>
+  <h2>No hay autos con estos filtros.</h2>
+  <button type="button" class="boton" data-limpiar>Limpiar filtros</button>
+  <BotonWhatsApp href={href} origen="stock_vacio" id="vacio-wa">Contanos qué buscás</BotonWhatsApp>
+</div>

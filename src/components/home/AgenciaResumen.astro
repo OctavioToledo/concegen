@@ -1,0 +1,21 @@
+---
+// Foto del local, dirección, estado del horario y «Cómo llegar». Sin mapa embebido al cargar.
+import { agencia } from '../../lib/agencia';
+import { fotoAgencia } from '../../lib/fotos';
+import Foto from '../ui/Foto.astro';
+import Horario from '../sitio/Horario.astro';
+
+const foto = agencia.laAgencia.fotoLocal ? fotoAgencia(agencia.laAgencia.fotoLocal) : undefined;
+---
+<section class="contenedor seccion resumen-agencia" aria-labelledby="agencia-titulo">
+  {foto && <Foto src={foto} alt={`Frente de ${agencia.nombre}`} sizes="(min-width: 900px) 55vw, 100vw" />}
+  <div class="pila">
+    <h2 id="agencia-titulo">Visitanos en {agencia.ciudad.split(',')[0]}</h2>
+    <p>{agencia.contacto.direccion}</p>
+    <Horario />
+    <div class="fila">
+      <a class="boton" href={agencia.contacto.mapsUrl} target="_blank" rel="noopener">Cómo llegar</a>
+      <a class="boton boton-texto" href="/la-agencia">Conocé la agencia</a>
+    </div>
+  </div>
+</section>

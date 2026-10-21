@@ -1,0 +1,17 @@
+---
+interface Opcion { valor: string; texto: string; [dato: string]: string | undefined }
+interface Props {
+  id: string;
+  name?: string;
+  opciones: Opcion[];
+  valor?: string;
+  class?: string;
+  [atributo: string]: unknown;
+}
+const { id, name, opciones, valor, class: clase, ...resto } = Astro.props;
+---
+<select id={id} name={name} class:list={['control', clase]} {...resto}>
+  {opciones.map(({ valor: v, texto, ...datos }) => (
+    <option value={v} selected={v === valor} {...datos}>{texto}</option>
+  ))}
+</select>

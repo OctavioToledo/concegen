@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import BotonWhatsApp from '../components/ui/BotonWhatsApp.astro';
+import Horario from '../components/sitio/Horario.astro';
+import Mapa from '../components/sitio/Mapa.astro';
+import { agencia } from '../lib/agencia';
+import { whatsappUrl } from '../lib/whatsapp';
+import { mensajes } from '../config/mensajes';
+
+const { contacto } = agencia;
+const href = whatsappUrl(contacto.whatsapp, mensajes.general({ agencia: agencia.nombre }));
+---
+<Base titulo="Contacto" descripcion={`Escribinos por WhatsApp o visitanos en ${contacto.direccion}.`}>
+  <div class="contenedor pagina-cabecera dos-columnas">
+    <div class="pila-grande">
+      <div class="pila">
+        <h1>Contacto</h1>
+        <p>La forma más rápida de hablar con nosotros es WhatsApp. Respondemos en el horario de atención.</p>
+        <BotonWhatsApp href={href} origen="contacto" ancho class="solo-movil">Escribinos por WhatsApp</BotonWhatsApp>
+      </div>
+      <dl class="pila">
+        <div class="pila-chica"><dt class="rotulo">Teléfono</dt><dd><a href={`tel:${contacto.telefono.replace(/\D/g, '')}`}>{contacto.telefono}</a></dd></div>
+        {contacto.email && <div class="pila-chica"><dt class="rotulo">Email</dt><dd><a href={`mailto:${contacto.email}`}>{contacto.email}</a></dd></div>}
+        <div class="pila-chica"><dt class="rotulo">Dirección</dt><dd>{contacto.direccion}. <a href={contacto.mapsUrl} target="_blank" rel="noopener">Cómo llegar</a></dd></div>
+        <div class="pila-chica"><dt class="rotulo">Horario</dt><dd><Horario /></dd></div>
+      </dl>
+    </div>
+    <Mapa />
+  </div>
+</Base>

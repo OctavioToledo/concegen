@@ -1,0 +1,114 @@
+---
+// En el celular, un <dialog> que sube desde abajo. En escritorio, una columna lateral.
+// Sin sliders dobles: selects, chips y controles segmentados.
+import { agencia } from '../../lib/agencia';
+import { escalonesPrecio, marcasYModelos, rangoAnios, todos, ESCALONES_KM } from '../../lib/stock';
+import { carrocerias, combustibles } from '../../lib/etiquetas';
+import { numero, precioCorto } from '../../lib/formato';
+import Panel from '../ui/Panel.astro';
+import Chips from '../ui/Chips.astro';
+import Segmentado from '../ui/Segmentado.astro';
+import type { Carroceria, Combustible } from '../../schema/auto';
+
+const autos = todos();
+const marcas = marcasYModelos();
+const [anioMin, anioMax] = rangoAnios();
+const anios = Array.from({ length: anioMax - anioMin + 1 }, (_, i) => anioMax - i);
+const moneda = agencia.moneda.porDefecto;
+const escalones = { ARS: escalonesPrecio('ARS'), USD: escalonesPrecio('USD') };
+const kmMax = Math.max(...autos.map((a) => a.km));
+const kms = ESCALONES_KM.filter((k, i) => k < kmMax || ESCALONES_KM[i - 1] < kmMax);
+
+// Solo las opciones que existen en el stock.
+const combs = [...new Set(autos.map((a) => a.combustible))] as Combustible[];
+const carrs = [...new Set(autos.map((a) => a.carroceria))] as Carroceria[];
+const hayCeroKm = autos.some((a) => a.condicion === '0km');
+
+const config = {
+  monedaDefecto: moneda,
+  cotizacion: agencia.moneda.cotizacionReferencia,
+  escalones,
+  modelos: marcas.flatMap((m) => m.modelos.map((mo) => ({ marca: m.slug, ...mo }))),
+  numero: agencia.contacto.whatsapp,
+  agencia: agencia.nombre,
+};
+---
+<Panel id="panel-filtros" titulo="Filtros" class="filtros">
+  <button type="button" slot="cabecera" class="boton boton-texto" data-limpiar>Limpiar</button>
+
+  <form id="filtros-form" action="/stock" method="get" data-config={JSON.stringify(config)}>
+    <div class="filtros-grupo">
+      <div class="campo">
+        <label for="f-marca">Marca</label>
+        <select id="f-marca" name="marca" class="control">
+          <option value="">Todas</option>
+          {marcas.map((m) => <option value={m.slug}>{m.nombre}</option>)}
+        </select>
+      </div>
+      <div class="campo">
+        <label for="f-modelo">Modelo</label>
+        <select id="f-modelo" name="modelo" class="control">
+          <option value="">Todos</option>
+        </select>
+      </div>
+    </div>
+
+    <fieldset class="filtros-grupo">
+      <legend class="grupo-rotulo">Año</legend>
+      <div class="par">
+        <select name="anio-desde" class="control" aria-label="Año desde">
+          <option value="">Desde</option>
+          {[...anios].reverse().map((a) => <option value={a}>{a}</option>)}
+        </select>
+        <select name="anio-hasta" class="control" aria-label="Año hasta">
+          <option value="">Hasta</option>
+          {anios.map((a) => <option value={a}>{a}</option>)}
+        </select>
+      </div>
+    </fieldset>
+
+    <div class="filtros-grupo">
+      <Segmentado name="moneda" rotulo="Precio" valor={moneda} opciones={[{ valor: 'ARS', texto: 'Pesos' }, { valor: 'USD', texto: 'Dólares' }]} />
+      <div class="par">
+        <select name="precio-desde" class="control" aria-label="Precio desde">
+          <option value="">Desde</option>
+          {escalones[moneda].map((v) => <option value={v}>{precioCorto(v, moneda)}</option>)}
+        </select>
+        <select name="precio-hasta" class="control" aria-label="Precio hasta">
+          <option value="">Hasta</option>
+          {escalones[moneda].map((v) => <option value={v}>{precioCorto(v, moneda)}</option>)}
+        </select>
+      </div>
+    </div>
+
+    <div class="filtros-grupo">
+      <div class="campo">
+        <label for="f-km">Kilómetros</label>
+        <select id="f-km" name="km" class="control">
+          <option value="">Cualquier kilometraje</option>
+          {kms.map((k) => <option value={k}>Hasta {numero(k)} km</option>)}
+        </select>
+      </div>
+    </div>
+
+    <div class="filtros-grupo">
+      <Chips name="comb" rotulo="Combustible" opciones={combs.map((c) => ({ valor: c, texto: combustibles[c] }))} />
+    </div>
+
+    <div class="filtros-grupo">
+      <Segmentado name="caja" rotulo="Caja" opciones={[{ valor: '', texto: 'Todas' }, { valor: 'manual', texto: 'Manual' }, { valor: 'automatica', texto: 'Automática' }]} />
+    </div>
+
+    <div class="filtros-grupo">
+      <Chips name="carr" rotulo="Carrocería" opciones={carrs.map((c) => ({ valor: c, texto: carrocerias[c] }))} />
+    </div>
+
+    {hayCeroKm && (
+      <div class="filtros-grupo">
+        <Segmentado name="cond" rotulo="Condición" opciones={[{ valor: '', texto: 'Todos' }, { valor: '0km', texto: '0 km' }, { valor: 'usado', texto: 'Usados' }]} />
+      </div>
+    )}
+  </form>
+
+  <button slot="pie" type="submit" form="filtros-form" class="boton boton-primario ancho-completo" id="ver-autos">Ver {autos.length} autos</button>
+</Panel>

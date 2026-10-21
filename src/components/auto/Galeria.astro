@@ -1,0 +1,43 @@
+---
+// Galería con scroll-snap nativo, contador y miniaturas en escritorio. Al tocar una foto se abre el visor.
+import type { Auto } from '../../schema/auto';
+import Foto from '../ui/Foto.astro';
+import Visor from './Visor.astro';
+import { fotoAuto, SIZES } from '../../lib/fotos';
+
+interface Props { auto: Auto }
+const { auto } = Astro.props;
+const total = auto.fotos.length;
+---
+<div class="galeria" data-galeria>
+  <div class="galeria-pista" data-pista tabindex="0" aria-label={`Fotos del auto, ${total} en total`} role="region">
+    {auto.fotos.map((f, i) => (
+      <button type="button" data-abrir-visor={i} aria-label={`Ampliar foto ${i + 1} de ${total}: ${f.alt}`}>
+        <Foto
+          src={fotoAuto(f.src)!}
+          alt={f.alt}
+          sizes={SIZES.ficha}
+          proporcion="43"
+          prioridad={i === 0}
+          transicion={i === 0 ? `foto-${auto.slug}` : undefined}
+        />
+      </button>
+    ))}
+  </div>
+  {total > 1 && <p class="galeria-contador" data-contador aria-hidden="true">1 de {total}</p>}
+</div>
+{total > 1 && (
+  <div class="miniaturas" data-miniaturas>
+    {auto.fotos.map((f, i) => (
+      <button type="button" data-ir={i} aria-label={`Ver foto ${i + 1}`} aria-current={i === 0 ? 'true' : 'false'}>
+        <Foto src={fotoAuto(f.src)!} alt="" sizes="96px" proporcion="43" anchos={[120, 240]} />
+      </button>
+    ))}
+  </div>
+)}
+<Visor auto={auto} />
+
+<script>
+  import { iniciarGaleria } from '../../scripts/galeria';
+  iniciarGaleria();
+</script>

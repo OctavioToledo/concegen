@@ -1,0 +1,55 @@
+---
+// Tarjeta del stock: sin caja ni sombra. Toda la tarjeta es un solo link.
+import type { Auto } from '../../schema/auto';
+import Cartel from './Cartel.astro';
+import Foto from '../ui/Foto.astro';
+import { fotoAuto, SIZES } from '../../lib/fotos';
+import { nombre, resumenMecanico, slugTexto } from '../../lib/etiquetas';
+import { precioComparable } from '../../lib/stock';
+
+interface Props {
+  auto: Auto;
+  inmediata?: boolean;       // las dos primeras de la grilla
+  datos?: boolean;           // atributos data-* para filtrar en /stock
+  orden?: number;            // posición en Recomendados
+  sizes?: string;
+  encabezado?: 'h2' | 'h3';
+}
+const { auto, inmediata = false, datos = false, orden, sizes = SIZES.tarjeta, encabezado = 'h3' } = Astro.props;
+const portada = auto.fotos[0];
+const Titulo = encabezado;
+const atributos = datos
+  ? {
+      'data-auto': '',
+      'data-marca': slugTexto(auto.marca),
+      'data-modelo': slugTexto(auto.modelo),
+      'data-anio': auto.anio,
+      'data-precio': precioComparable(auto) ?? '',
+      'data-km': auto.km,
+      'data-comb': auto.combustible,
+      'data-caja': auto.transmision,
+      'data-carr': auto.carroceria,
+      'data-cond': auto.condicion,
+      'data-estado': auto.estado,
+      'data-ingreso': auto.fechaIngreso,
+      'data-rec': orden,
+    }
+  : {};
+---
+<article class:list={[auto.estado === 'vendido' && 'es-vendido']} {...atributos}>
+  <a class="tarjeta" href={`/autos/${auto.slug}`}>
+    <Foto
+      src={fotoAuto(portada.src)!}
+      alt={portada.alt}
+      sizes={sizes}
+      inmediata={inmediata}
+      transicion={datos ? `foto-${auto.slug}` : undefined}
+    />
+    <Cartel auto={auto} />
+    <div class="tarjeta-texto">
+      <Titulo class="tarjeta-nombre">{nombre(auto)}</Titulo>
+      <p class="tarjeta-version">{auto.version}</p>
+      <p class="tarjeta-mecanica">{resumenMecanico(auto)}</p>
+    </div>
+  </a>
+</article>

@@ -1,0 +1,19 @@
+---
+// Listo y apagado: lee `testimonios` de la config. En la demo la lista está vacía.
+import { agencia } from '../../lib/agencia';
+
+const lista = agencia.testimonios;
+---
+{agencia.secciones.testimonios && lista.length > 0 && (
+  <section class="contenedor seccion" aria-labelledby="testimonios-titulo">
+    <h2 id="testimonios-titulo" class="cabecera-seccion">Lo que dicen nuestros clientes</h2>
+    <ul class="testimonios">
+      {lista.map((t) => (
+        <li class="testimonio pila-chica">
+          <blockquote style="margin:0"><p>{t.texto}</p></blockquote>
+          <p class="rotulo">{t.nombre}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

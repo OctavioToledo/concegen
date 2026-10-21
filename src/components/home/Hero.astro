@@ -1,0 +1,40 @@
+---
+// Foto del auto destacado a sangre (LCP) con su cartel. Modo alternativo: la foto del local.
+import { agencia } from '../../lib/agencia';
+import { autoHero } from '../../lib/stock';
+import { fotoAuto, fotoAgencia, SIZES } from '../../lib/fotos';
+import { nombre } from '../../lib/etiquetas';
+import Foto from '../ui/Foto.astro';
+import Cartel from '../auto/Cartel.astro';
+import BuscadorRapido from './BuscadorRapido.astro';
+
+const auto = autoHero();
+const fotoLocal = agencia.hero.tipo === 'foto' ? fotoAgencia(agencia.hero.src) : undefined;
+---
+<section class="contenedor hero" aria-labelledby="hero-titulo">
+  <div>
+    {auto ? (
+      <>
+        <a href={`/autos/${auto.slug}`} class="hero-foto" style="display:block" tabindex="-1" aria-hidden="true">
+          <Foto src={fotoAuto(auto.fotos[0].src)!} alt="" sizes={SIZES.hero} proporcion="43" prioridad />
+        </a>
+        <div class="hero-cartel"><Cartel auto={auto} /></div>
+        <div class="hero-auto entre">
+          <div>
+            <p class="ancho" style="font-size: var(--t-h2)">{nombre(auto)}</p>
+            <p class="suave">{auto.version}</p>
+          </div>
+          <a href={`/autos/${auto.slug}`} class="boton">Ver esta unidad<span class="sr">: {nombre(auto)} {auto.version}</span></a>
+        </div>
+      </>
+    ) : fotoLocal && agencia.hero.tipo === 'foto' ? (
+      <div class="hero-foto">
+        <Foto src={fotoLocal} alt={agencia.hero.alt} sizes={SIZES.hero} proporcion="43" prioridad />
+      </div>
+    ) : null}
+  </div>
+  <div>
+    <h1 id="hero-titulo" class="hero-titulo">{agencia.eslogan}</h1>
+    <BuscadorRapido />
+  </div>
+</section>

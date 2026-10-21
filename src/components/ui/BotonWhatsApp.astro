@@ -1,0 +1,29 @@
+---
+// Botón de WhatsApp. Verde fijo en todas las agencias. Nunca se deshabilita.
+import Icono from './Icono.astro';
+
+interface Props {
+  href: string;
+  variante?: 'principal' | 'secundario' | 'compacto';
+  origen: string;            // data-wa-origen, para la analítica
+  motivo?: string;           // data-wa-motivo
+  auto?: string;             // slug del auto, si hay uno
+  ancho?: boolean;           // ancho completo en el celular
+  class?: string;
+  [atributo: string]: unknown;
+}
+const { href, variante = 'principal', origen, motivo, auto, ancho = false, class: clase, ...resto } = Astro.props;
+---
+<a
+  href={href}
+  target="_blank"
+  rel="noopener"
+  class:list={['wa', `wa-${variante}`, ancho && 'ancho-completo', clase]}
+  data-wa-origen={origen}
+  data-wa-motivo={motivo}
+  data-wa-auto={auto}
+  {...resto}
+>
+  <Icono nombre="whatsapp" />
+  <span><slot /></span>
+</a>

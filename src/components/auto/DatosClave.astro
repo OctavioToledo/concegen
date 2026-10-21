@@ -1,0 +1,22 @@
+---
+import type { Auto } from '../../schema/auto';
+import { numero } from '../../lib/formato';
+import { combustibles, transmisiones } from '../../lib/etiquetas';
+
+interface Props { auto: Auto }
+const { auto } = Astro.props;
+const datos = [
+  ['Año', String(auto.anio)],
+  ['Kilómetros', numero(auto.km)],
+  ['Combustible', combustibles[auto.combustible]],
+  ['Caja', transmisiones[auto.transmision]],
+];
+---
+<dl class="datos">
+  {datos.map(([rotulo, valor]) => (
+    <div class="dato">
+      <dt>{rotulo}</dt>
+      <dd>{valor}</dd>
+    </div>
+  ))}
+</dl>

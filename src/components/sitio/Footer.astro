@@ -1,0 +1,41 @@
+---
+import { agencia, destinos } from '../../lib/agencia';
+import { whatsappUrl } from '../../lib/whatsapp';
+import { mensajes } from '../../config/mensajes';
+import Horario from './Horario.astro';
+import CreditoDevott from './CreditoDevott.astro';
+
+const { contacto, redes } = agencia;
+const listaRedes = [
+  ['Instagram', redes.instagram],
+  ['Facebook', redes.facebook],
+  ['TikTok', redes.tiktok],
+].filter(([, url]) => url) as [string, string][];
+---
+<footer class="footer">
+  <div class="contenedor footer-grilla">
+    <div class="pila">
+      <p class="ancho" style="font-size: var(--t-h2)">{agencia.nombre}</p>
+      <p>{contacto.direccion}</p>
+      <Horario />
+    </div>
+    <nav aria-label="Pie" class="pila-chica">
+      <h2 class="rotulo">Secciones</h2>
+      <div class="footer-links">
+        {destinos().map((d) => <a href={d.href}>{d.texto}</a>)}
+      </div>
+    </nav>
+    <div class="pila-chica">
+      <h2 class="rotulo">Contacto</h2>
+      <div class="footer-links">
+        <a href={whatsappUrl(contacto.whatsapp, mensajes.general({ agencia: agencia.nombre }))} target="_blank" rel="noopener" data-wa-origen="contacto">WhatsApp</a>
+        <a href={`tel:${contacto.telefono.replace(/\D/g, '')}`}>{contacto.telefono}</a>
+        {contacto.email && <a href={`mailto:${contacto.email}`}>{contacto.email}</a>}
+        {listaRedes.map(([nombre, url]) => <a href={url} rel="noopener">{nombre}</a>)}
+      </div>
+    </div>
+  </div>
+  <div class="contenedor" style="margin-top: var(--e-7)">
+    <CreditoDevott />
+  </div>
+</footer>

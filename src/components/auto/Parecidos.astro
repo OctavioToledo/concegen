@@ -1,0 +1,19 @@
+---
+import type { Auto } from '../../schema/auto';
+import TarjetaAuto from './TarjetaAuto.astro';
+import { SIZES } from '../../lib/fotos';
+
+interface Props { autos: Auto[]; titulo?: string }
+const { autos, titulo = 'Autos parecidos' } = Astro.props;
+---
+{autos.length > 0 && (
+  <section aria-labelledby="parecidos-titulo">
+    <div class="cabecera-seccion">
+      <h2 id="parecidos-titulo">{titulo}</h2>
+      <a href="/stock" class="chico">Ver todo el stock</a>
+    </div>
+    <div class="carrusel">
+      {autos.map((a) => <TarjetaAuto auto={a} sizes={SIZES.carrusel} />)}
+    </div>
+  </section>
+)}

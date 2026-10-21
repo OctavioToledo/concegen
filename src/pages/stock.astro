@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import TarjetaAuto from '../components/auto/TarjetaAuto.astro';
+import BarraStock from '../components/stock/BarraStock.astro';
+import PanelFiltros from '../components/stock/PanelFiltros.astro';
+import EstadoVacio from '../components/stock/EstadoVacio.astro';
+import { agencia } from '../lib/agencia';
+import { todos } from '../lib/stock';
+
+const autos = todos();
+---
+<Base titulo="Stock" descripcion={`Autos 0 km y usados de ${agencia.nombre}, en ${agencia.ciudad}. Filtrá por marca, precio, año y más.`}>
+  <div class="contenedor stock-cabecera">
+    <h1 id="stock-titulo" tabindex="-1">Stock</h1>
+    <p class="suave" id="stock-cantidad">{autos.length} autos</p>
+    <p class="sr" aria-live="polite" id="anuncio-cantidad"></p>
+  </div>
+
+  <BarraStock />
+
+  <div class="contenedor stock-layout">
+    <PanelFiltros />
+    <div>
+      <script is:inline>
+        // Si llegan filtros en la URL, el stock se muestra recién después de aplicarlos.
+        if (location.search) {
+          document.documentElement.classList.add('filtrando');
+          setTimeout(function () { document.documentElement.classList.remove('filtrando'); }, 1500);
+        }
+      </script>
+      <div id="grilla-stock" class="grilla-stock">
+        {autos.map((a, i) => <TarjetaAuto auto={a} datos orden={i} inmediata={i < 2} encabezado="h2" />)}
+      </div>
+      <script>
+        import '../scripts/filtros';
+      </script>
+      <EstadoVacio />
+    </div>
+  </div>
+</Base>

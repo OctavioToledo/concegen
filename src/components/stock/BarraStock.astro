@@ -1,0 +1,25 @@
+---
+// Fija arriba al hacer scroll: «Filtrar (2)» y «Ordenar». Debajo, los filtros activos.
+import Icono from '../ui/Icono.astro';
+import ChipsActivos from './ChipsActivos.astro';
+---
+<div class="barra-stock">
+  <div class="contenedor">
+    <div class="barra-stock-fila">
+      <button type="button" class="boton boton-filtrar" id="boton-filtrar" data-abrir="panel-filtros" aria-haspopup="dialog" aria-expanded="false" aria-controls="panel-filtros">
+        <Icono nombre="filtro" /><span id="boton-filtrar-texto">Filtrar</span>
+      </button>
+      <div class="orden">
+        <label for="f-orden" class="rotulo">Ordenar</label>
+        <select id="f-orden" name="orden" form="filtros-form" class="control">
+          <option value="">Recomendados</option>
+          <option value="precio-asc">Menor precio</option>
+          <option value="precio-desc">Mayor precio</option>
+          <option value="nuevos">Más nuevos</option>
+          <option value="km">Menos km</option>
+        </select>
+      </div>
+    </div>
+    <ChipsActivos />
+  </div>
+</div>

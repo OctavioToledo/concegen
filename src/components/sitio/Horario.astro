@@ -1,0 +1,28 @@
+---
+// Lista de horarios más el estado calculado en el navegador: «Abierto ahora, cierra a las 13».
+import { agencia } from '../../lib/agencia';
+import type { Dia } from '../../schema/agencia';
+
+interface Props { compacto?: boolean }
+const { compacto = false } = Astro.props;
+
+const NOMBRES: Record<Dia, string> = { lun: 'Lunes', mar: 'Martes', mie: 'Miércoles', jue: 'Jueves', vie: 'Viernes', sab: 'Sábado', dom: 'Domingo' };
+const hora = (h: string) => (h.endsWith(':00') ? String(Number(h.slice(0, 2))) : `${Number(h.slice(0, 2))}:${h.slice(3)}`);
+
+function dias(lista: Dia[]): string {
+  if (lista.length > 2) return `${NOMBRES[lista[0]]} a ${NOMBRES[lista[lista.length - 1]].toLowerCase()}`;
+  return lista.map((d, i) => (i ? NOMBRES[d].toLowerCase() : NOMBRES[d])).join(' y ');
+}
+const franjas = (f: [string, string][]) => f.map(([a, c]) => `${hora(a)} a ${hora(c)}`).join(' y ');
+---
+<div class="pila-chica">
+  <p class="horario-estado" data-horario={JSON.stringify(agencia.horarios)} data-zona={agencia.zonaHoraria} hidden></p>
+  {!compacto && (
+    <div class="horarios chico">
+      {agencia.horarios.map((h) => (
+        <div><span>{dias(h.dias)}</span><span>{franjas(h.franjas)}</span></div>
+      ))}
+    </div>
+  )}
+  {compacto && <p class="chico suave">{agencia.horarios.map((h) => `${dias(h.dias)}, ${franjas(h.franjas)}`).join('. ')}.</p>}
+</div>

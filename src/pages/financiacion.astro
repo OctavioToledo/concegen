@@ -1,0 +1,73 @@
+---
+import Base from '../layouts/Base.astro';
+import Campo from '../components/ui/Campo.astro';
+import Icono from '../components/ui/Icono.astro';
+import { agencia } from '../lib/agencia';
+import { disponibles } from '../lib/stock';
+import { nombreCompleto } from '../lib/etiquetas';
+import { mensajesSinJs } from '../config/mensajes';
+
+if (!agencia.secciones.financiacion) return Astro.redirect('/');
+
+const autos = disponibles();
+---
+<Base titulo="Financiación" descripcion={`Financiá tu próximo auto en ${agencia.nombre}. Contanos el anticipo y las cuotas, y te armamos una propuesta por WhatsApp.`}>
+  <div class="contenedor pagina-cabecera dos-columnas">
+    <div class="pila-grande">
+      <div class="pila">
+        <h1>Financiación</h1>
+        <p>Contanos qué auto te interesa, con cuánto contás de anticipo y en cuántas cuotas querés pagar el resto. Te respondemos por WhatsApp con una propuesta.</p>
+      </div>
+
+      <section aria-labelledby="como-titulo" class="pila">
+        <h2 id="como-titulo">Cómo funciona</h2>
+        <ol class="pasos">
+          <li><p>Completás el formulario y nos llega tu consulta por WhatsApp.</p></li>
+          <li><p>Revisamos las opciones de crédito disponibles para tu caso.</p></li>
+          <li><p>Te mandamos la propuesta y, si te sirve, avanzamos con la documentación.</p></li>
+        </ol>
+      </section>
+
+      {agencia.financiacion.requisitos.length > 0 && (
+        <section aria-labelledby="req-titulo" class="pila">
+          <h2 id="req-titulo">Requisitos</h2>
+          <ul class="lista">
+            {agencia.financiacion.requisitos.map((r) => <li>{r}</li>)}
+          </ul>
+        </section>
+      )}
+    </div>
+
+    <section aria-labelledby="form-titulo" class="pila columna">
+      <h2 id="form-titulo">Pedí tu propuesta</h2>
+      <form class="formulario" action={`https://wa.me/${agencia.contacto.whatsapp}`} method="get" target="_blank" data-wa-form="financiacion" data-wa-origen="financiacion">
+        <input type="hidden" name="text" value={mensajesSinJs.financiacion} />
+        <Campo id="fin-auto" rotulo="Auto de interés">
+          <select id="fin-auto" class="control" data-valor>
+            <option value="">Todavía no elegí</option>
+            {autos.map((a) => <option value={a.slug} data-nombre={nombreCompleto(a)}>{nombreCompleto(a)}</option>)}
+          </select>
+        </Campo>
+        <Campo id="fin-anticipo" rotulo="Anticipo en pesos" ayuda="Opcional. Podés incluir tu usado como parte del anticipo.">
+          <input id="fin-anticipo" class="control" type="text" inputmode="numeric" autocomplete="off" data-valor data-patron="^[0-9.\s$]*$" data-patron-error="Escribí solo números" />
+        </Campo>
+        <Campo id="fin-cuotas" rotulo="Cantidad de cuotas" error="Elegí la cantidad de cuotas">
+          <select id="fin-cuotas" class="control" data-valor data-requerido required>
+            <option value="">Elegí una opción</option>
+            {agencia.financiacion.cuotas.map((c) => <option value={c}>{c} cuotas</option>)}
+          </select>
+        </Campo>
+        <Campo id="fin-nombre" rotulo="Tu nombre" error="Falta tu nombre">
+          <input id="fin-nombre" class="control" type="text" autocomplete="given-name" data-valor data-requerido required />
+        </Campo>
+        <button type="submit" class="wa wa-principal ancho-completo"><Icono nombre="whatsapp" /><span>Enviar por WhatsApp</span></button>
+        <p class="chico suave">Sujeto a aprobación crediticia. Las condiciones las define la agencia.</p>
+      </form>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { iniciarFormularios } from '../scripts/formularios';
+  iniciarFormularios();
+</script>

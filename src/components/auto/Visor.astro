@@ -1,0 +1,30 @@
+---
+// Visor a pantalla completa: deslizable, flechas de teclado, Esc para cerrar, zoom con dos dedos.
+import type { Auto } from '../../schema/auto';
+import Foto from '../ui/Foto.astro';
+import Icono from '../ui/Icono.astro';
+import { fotoAuto } from '../../lib/fotos';
+
+interface Props { auto: Auto }
+const { auto } = Astro.props;
+const total = auto.fotos.length;
+---
+<dialog class="visor" data-visor aria-label="Fotos ampliadas">
+  <div class="visor-barra">
+    <p data-visor-contador aria-live="polite">1 de {total}</p>
+    <button type="button" class="cerrar" data-cerrar aria-label="Cerrar"><Icono nombre="cerrar" /></button>
+  </div>
+  <div class="visor-pista" data-visor-pista>
+    {auto.fotos.map((f) => (
+      <div>
+        <Foto src={fotoAuto(f.src)!} alt={f.alt} sizes="100vw" proporcion="43" anchos={[720, 1080, 1440]} />
+      </div>
+    ))}
+  </div>
+  {total > 1 && (
+    <>
+      <button type="button" class="visor-flecha visor-flecha--ant" data-visor-ant aria-label="Foto anterior"><Icono nombre="anterior" /></button>
+      <button type="button" class="visor-flecha visor-flecha--sig" data-visor-sig aria-label="Foto siguiente"><Icono nombre="siguiente" /></button>
+    </>
+  )}
+</dialog>

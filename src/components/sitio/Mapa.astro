@@ -1,0 +1,22 @@
+---
+// Nunca un iframe al cargar: el mapa embebido carga solo si el usuario lo toca.
+import { agencia } from '../../lib/agencia';
+
+const src = `https://maps.google.com/maps?q=${encodeURIComponent(agencia.contacto.direccion)}&output=embed`;
+---
+<div class="mapa" data-mapa={src}>
+  <button type="button" class="boton">Ver mapa</button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-mapa]').forEach((caja) => {
+    caja.querySelector('button')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = caja.dataset.mapa!;
+      iframe.title = 'Mapa de la agencia';
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'no-referrer-when-downgrade';
+      caja.replaceChildren(iframe);
+    });
+  });
+</script>

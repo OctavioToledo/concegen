@@ -1,0 +1,22 @@
+---
+// Panel que sube desde abajo. <dialog> nativo: el foco y Esc los maneja el navegador.
+import Icono from './Icono.astro';
+
+interface Props {
+  id: string;
+  titulo: string;
+  class?: string;
+}
+const { id, titulo, class: clase } = Astro.props;
+---
+<dialog id={id} class:list={['panel', clase]} aria-labelledby={`${id}-titulo`}>
+  <div class="panel-cabecera">
+    <h2 id={`${id}-titulo`}>{titulo}</h2>
+    <div class="fila">
+      <slot name="cabecera" />
+      <button type="button" class="cerrar" data-cerrar aria-label="Cerrar"><Icono nombre="cerrar" /></button>
+    </div>
+  </div>
+  <div class="panel-cuerpo"><slot /></div>
+  <div class="panel-pie"><slot name="pie" /></div>
+</dialog>

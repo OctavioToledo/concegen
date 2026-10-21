@@ -1,0 +1,37 @@
+---
+// El cartel de parabrisas: banda con la condición o el estado, precio grande y año con km.
+// Todos los estados se leen por texto, no solo por color.
+import type { Auto } from '../../schema/auto';
+import { precio, km } from '../../lib/formato';
+
+interface Props {
+  auto: Auto;
+  grande?: boolean;
+}
+const { auto, grande = false } = Astro.props;
+
+const vendido = auto.estado === 'vendido';
+const reservado = auto.estado === 'reservado';
+const tipo = vendido ? 'vendido' : reservado ? 'reservado' : auto.condicion;
+const banda = vendido ? 'Vendido' : reservado ? 'Reservado' : auto.condicion === '0km' ? '0 km' : 'Usado';
+const condicion = auto.condicion === '0km' ? '0 km' : 'Usado';
+
+const linea = vendido
+  ? [String(auto.anio)]
+  : auto.condicion === '0km'
+    ? [`Modelo ${auto.anio}`]
+    : [String(auto.anio), km(auto.km)];
+---
+<div class:list={['cartel', `cartel--${tipo}`, grande && 'cartel--grande']}>
+  <div class="cartel-banda">
+    {reservado ? <span>Reservado<span class="sr">, {condicion.toLowerCase()}</span></span> : banda}
+  </div>
+  <div class="cartel-cuerpo">
+    {!vendido && (
+      auto.precio === null
+        ? <span class="cartel-precio cartel-precio--consultar angosto">Consultar precio</span>
+        : <span class="cartel-precio angosto">{precio(auto.precio, auto.moneda)}</span>
+    )}
+    <span class="cartel-linea">{linea.map((t) => <span>{t}</span>)}</span>
+  </div>
+</div>

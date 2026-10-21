@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import Campo from '../components/ui/Campo.astro';
+import Icono from '../components/ui/Icono.astro';
+import { agencia } from '../lib/agencia';
+import { mensajesSinJs } from '../config/mensajes';
+
+if (!agencia.secciones.tomaUsados) return Astro.redirect('/');
+
+const anioActual = new Date().getFullYear();
+---
+<Base titulo="Tomamos tu usado" descripcion={`Cotizá tu usado en ${agencia.nombre} y usalo como parte de pago. Te respondemos por WhatsApp.`}>
+  <div class="contenedor pagina-cabecera dos-columnas">
+    <div class="pila">
+      <h1>Tomamos tu usado</h1>
+      <p>Usá tu auto como parte de pago. Completá los datos y te pasamos una cotización por WhatsApp. Si podés, mandanos fotos por el mismo chat: nos ayudan a darte un valor más preciso.</p>
+    </div>
+
+    <section aria-labelledby="form-titulo" class="pila columna">
+      <h2 id="form-titulo">Datos de tu auto</h2>
+      <form class="formulario" action={`https://wa.me/${agencia.contacto.whatsapp}`} method="get" target="_blank" data-wa-form="usado" data-wa-origen="usado">
+        <input type="hidden" name="text" value={mensajesSinJs.usado} />
+        <Campo id="us-marca" rotulo="Marca" error="Falta la marca del auto">
+          <input id="us-marca" class="control" type="text" autocomplete="off" data-valor data-requerido required />
+        </Campo>
+        <Campo id="us-modelo" rotulo="Modelo" error="Falta el modelo del auto">
+          <input id="us-modelo" class="control" type="text" autocomplete="off" data-valor data-requerido required />
+        </Campo>
+        <Campo id="us-version" rotulo="Versión" ayuda="Opcional. Por ejemplo, 1.6 Trendline.">
+          <input id="us-version" class="control" type="text" autocomplete="off" data-valor />
+        </Campo>
+        <div class="par">
+          <Campo id="us-anio" rotulo="Año" error="Falta el año del auto">
+            <input id="us-anio" class="control" type="text" inputmode="numeric" maxlength="4" autocomplete="off" data-valor data-requerido required data-patron={`^(19[5-9][0-9]|20[0-9]{2})$`} data-patron-error={`Escribí un año entre 1950 y ${anioActual}`} />
+          </Campo>
+          <Campo id="us-km" rotulo="Kilómetros" error="Faltan los kilómetros">
+            <input id="us-km" class="control" type="text" inputmode="numeric" autocomplete="off" data-valor data-requerido required data-patron="^[0-9.\s]+$" data-patron-error="Escribí solo números" />
+          </Campo>
+        </div>
+        <Campo id="us-estado" rotulo="Estado general" error="Elegí el estado general">
+          <select id="us-estado" class="control" data-valor data-requerido required>
+            <option value="">Elegí una opción</option>
+            <option>Muy bueno</option>
+            <option>Bueno</option>
+            <option>Con detalles</option>
+          </select>
+        </Campo>
+        <Campo id="us-comentario" rotulo="Comentario" ayuda="Opcional. Detalles, services, cubiertas, lo que quieras contarnos.">
+          <textarea id="us-comentario" class="control" rows="4" data-valor></textarea>
+        </Campo>
+        <button type="submit" class="wa wa-principal ancho-completo"><Icono nombre="whatsapp" /><span>Pedir cotización por WhatsApp</span></button>
+      </form>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { iniciarFormularios } from '../scripts/formularios';
+  iniciarFormularios();
+</script>

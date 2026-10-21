@@ -1,0 +1,21 @@
+---
+// Accesos por carrocería, con cantidades reales del stock.
+import { conteoPorCarroceria } from '../../lib/stock';
+import { carroceriasPlural } from '../../lib/etiquetas';
+
+const tipos = conteoPorCarroceria();
+---
+{tipos.length > 1 && (
+  <section class="contenedor seccion" aria-labelledby="tipos-titulo">
+    <h2 id="tipos-titulo" class="cabecera-seccion">Por tipo</h2>
+    <ul class="chips">
+      {tipos.map((t) => (
+        <li>
+          <a class="chip" href={`/stock?carr=${t.carroceria}`}>
+            {carroceriasPlural[t.carroceria]} <span class="chip-cantidad">{t.cantidad}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

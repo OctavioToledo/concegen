@@ -1,0 +1,20 @@
+---
+// Círculo de 56 px abajo a la derecha. No va en la ficha, donde lo reemplaza la barra.
+import { agencia } from '../../lib/agencia';
+import { whatsappUrl } from '../../lib/whatsapp';
+import { mensajes } from '../../config/mensajes';
+import Icono from '../ui/Icono.astro';
+
+interface Props { mensaje?: string }
+const { mensaje = mensajes.general({ agencia: agencia.nombre }) } = Astro.props;
+---
+<a
+  href={whatsappUrl(agencia.contacto.whatsapp, mensaje)}
+  class="flotante"
+  target="_blank"
+  rel="noopener"
+  aria-label="Escribinos por WhatsApp"
+  data-wa-origen="flotante"
+>
+  <Icono nombre="whatsapp" />
+</a>

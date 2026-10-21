@@ -1,0 +1,24 @@
+---
+// Financiación y Tomamos tu usado. Solo aparecen si su switch está activo.
+import { agencia } from '../../lib/agencia';
+
+const { financiacion, tomaUsados } = agencia.secciones;
+---
+{(financiacion || tomaUsados) && (
+  <section class="contenedor seccion servicios" aria-label="Servicios">
+    {financiacion && (
+      <div class="servicio servicio--primario">
+        <h2>Financiación</h2>
+        <p>Llevate tu auto con un anticipo y el resto en cuotas. Te armamos una propuesta por WhatsApp.</p>
+        <a class="boton" href="/financiacion">Consultar financiación</a>
+      </div>
+    )}
+    {tomaUsados && (
+      <div class="servicio servicio--superficie">
+        <h2>Tomamos tu usado</h2>
+        <p>Usalo como parte de pago. Contanos qué auto tenés y te pasamos una cotización.</p>
+        <a class="boton" href="/tomamos-tu-usado">Cotizar mi usado</a>
+      </div>
+    )}
+  </section>
+)}

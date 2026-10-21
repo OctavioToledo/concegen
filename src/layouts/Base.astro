@@ -1,0 +1,101 @@
+---
+// Tokens de color, fuente, meta, noindex y analítica.
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/utilidades.css';
+import '../styles/componentes.css';
+import { agencia, absoluta, tema, temaCss } from '../lib/agencia';
+import { ogImagenGeneral } from '../lib/seo';
+import Header from '../components/sitio/Header.astro';
+import Footer from '../components/sitio/Footer.astro';
+import WhatsAppFlotante from '../components/sitio/WhatsAppFlotante.astro';
+import Aviso from '../components/ui/Aviso.astro';
+
+interface Props {
+  titulo: string;               // sin el nombre de la agencia; se agrega solo
+  descripcion: string;
+  imagen?: string;              // og:image absoluta
+  ogTipo?: 'website' | 'product';
+  jsonLd?: object;
+  flotante?: boolean;
+  mensajeFlotante?: string;
+  tituloCompleto?: boolean;     // usar `titulo` tal cual
+}
+
+const {
+  titulo,
+  descripcion,
+  imagen = ogImagenGeneral(),
+  ogTipo = 'website',
+  jsonLd,
+  flotante = true,
+  mensajeFlotante,
+  tituloCompleto = false,
+} = Astro.props;
+
+const tituloFinal = tituloCompleto ? titulo : `${titulo} | ${agencia.nombre}`;
+const canonical = absoluta(Astro.url.pathname);
+const { indexar } = agencia.sitio;
+const { proveedor, id } = agencia.analitica;
+---
+<!doctype html>
+<html lang="es-AR" data-analitica={proveedor}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{tituloFinal}</title>
+    <meta name="description" content={descripcion} />
+    {indexar ? <link rel="canonical" href={canonical} /> : <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content={tema['--c-primario']} />
+    <style is:inline set:html={temaCss}></style>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content={ogTipo === 'product' ? 'product' : 'website'} />
+    <meta property="og:site_name" content={agencia.nombre} />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imagen} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {indexar && jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+    {proveedor === 'umami' && <script is:inline defer src="https://cloud.umami.is/script.js" data-website-id={id}></script>}
+    {proveedor === 'plausible' && <script is:inline defer data-domain={id} src="https://plausible.io/js/script.tagged-events.js"></script>}
+    {proveedor === 'ga4' && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${id}`}></script>
+        <script is:inline define:vars={{ id }}>
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () { dataLayer.push(arguments); };
+          gtag('js', new Date());
+          gtag('config', id);
+        </script>
+      </>
+    )}
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <Header />
+    <main id="contenido" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    {flotante && <WhatsAppFlotante mensaje={mensajeFlotante} />}
+    <slot name="fijo" />
+    <Aviso />
+    <script>
+      import { iniciarDialogos } from '../scripts/menu';
+      import { iniciarAnalitica } from '../scripts/analitica';
+      import { iniciarHorario } from '../scripts/horario';
+      iniciarDialogos();
+      iniciarAnalitica();
+      iniciarHorario();
+    </script>
+  </body>
+</html>

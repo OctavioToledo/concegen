@@ -1,0 +1,30 @@
+---
+import type { Auto } from '../../schema/auto';
+import { numero } from '../../lib/formato';
+import { carrocerias, combustibles, condiciones, transmisiones } from '../../lib/etiquetas';
+
+interface Props { auto: Auto }
+const { auto } = Astro.props;
+const filas = [
+  ['Marca', auto.marca],
+  ['Modelo', auto.modelo],
+  ['Versión', auto.version],
+  ['Año', String(auto.anio)],
+  ['Kilómetros', `${numero(auto.km)} km`],
+  ['Combustible', combustibles[auto.combustible]],
+  ['Caja', transmisiones[auto.transmision]],
+  ['Carrocería', carrocerias[auto.carroceria]],
+  ['Color', auto.color],
+  ['Condición', condiciones[auto.condicion]],
+].filter(([, v]) => v);
+---
+<section aria-labelledby="specs-titulo" class="pila">
+  <h2 id="specs-titulo">Especificaciones</h2>
+  <table class="tabla">
+    <tbody>
+      {filas.map(([k, v]) => (
+        <tr><th scope="row">{k}</th><td>{v}</td></tr>
+      ))}
+    </tbody>
+  </table>
+</section>

@@ -1,0 +1,76 @@
+---
+// Formulario GET a /stock con los mismos parámetros del filtro: funciona aunque falle el JavaScript.
+import { agencia } from '../../lib/agencia';
+import { escalonesPrecio, marcasYModelos, precioComparable, todos } from '../../lib/stock';
+import { precioCorto } from '../../lib/formato';
+import { slugTexto } from '../../lib/etiquetas';
+import Campo from '../ui/Campo.astro';
+
+const moneda = agencia.moneda.porDefecto;
+const marcas = marcasYModelos();
+const autos = todos();
+const escalones = escalonesPrecio(moneda).slice(1);
+const cot = agencia.moneda.cotizacionReferencia;
+// Datos mínimos para contar en vivo: marca, modelo y precio comparable.
+const datos = autos.map((a) => [slugTexto(a.marca), slugTexto(a.modelo), precioComparable(a)]);
+---
+<form class="buscador" action="/stock" method="get" data-buscador data-autos={JSON.stringify(datos)} data-factor={moneda === 'USD' ? cot : 1}>
+  <Campo id="b-marca" rotulo="Marca">
+    <select id="b-marca" name="marca" class="control">
+      <option value="">Todas</option>
+      {marcas.map((m) => <option value={m.slug}>{m.nombre}</option>)}
+    </select>
+  </Campo>
+  <Campo id="b-modelo" rotulo="Modelo">
+    <select id="b-modelo" name="modelo" class="control">
+      <option value="">Todos</option>
+      {marcas.flatMap((m) => m.modelos.map((mo) => <option value={mo.slug} data-marca={m.slug}>{mo.nombre}</option>))}
+    </select>
+  </Campo>
+  <Campo id="b-precio" rotulo="Precio">
+    <select id="b-precio" name="precio" class="control">
+      <option value="">Cualquier precio</option>
+      {escalones.map((v) => <option value={`-${v}`}>Hasta {precioCorto(v, moneda)}</option>)}
+    </select>
+  </Campo>
+  <button type="submit" class="boton boton-primario ancho-completo" data-buscador-boton>Ver {autos.length} autos</button>
+  <p class="sr" aria-live="polite" data-buscador-anuncio></p>
+</form>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-buscador]');
+  if (form) {
+    const autos = JSON.parse(form.dataset.autos ?? '[]') as [string, string, number | null][];
+    const factor = Number(form.dataset.factor ?? 1);
+    const marca = form.querySelector<HTMLSelectElement>('#b-marca')!;
+    const modelo = form.querySelector<HTMLSelectElement>('#b-modelo')!;
+    const precio = form.querySelector<HTMLSelectElement>('#b-precio')!;
+    const boton = form.querySelector('[data-buscador-boton]')!;
+    const anuncio = form.querySelector('[data-buscador-anuncio]')!;
+    const modelos = [...modelo.options].slice(1);
+
+    const contar = () => {
+      const hasta = precio.value ? Number(precio.value.slice(1)) * factor : null;
+      const n = autos.filter(([ma, mo, p]) =>
+        (!marca.value || ma === marca.value) &&
+        (!modelo.value || mo === modelo.value) &&
+        (hasta === null || (p !== null && p <= hasta))).length;
+      const texto = n === 1 ? '1 auto' : `${n} autos`;
+      boton.textContent = `Ver ${texto}`;
+      anuncio.textContent = texto;
+    };
+
+    marca.addEventListener('change', () => {
+      modelo.replaceChildren(modelo.options[0], ...modelos.filter((o) => o.dataset.marca === marca.value));
+      modelo.value = '';
+      modelo.disabled = !marca.value;
+    });
+    modelo.disabled = !marca.value;
+    form.addEventListener('change', contar);
+    // Los campos vacíos no viajan en la URL.
+    form.addEventListener('submit', () => {
+      form.querySelectorAll('select').forEach((s) => { if (!s.value) s.disabled = true; });
+    });
+    window.addEventListener('pageshow', () => form.querySelectorAll('select').forEach((s) => { s.disabled = s === modelo && !marca.value; }));
+  }
+</script>

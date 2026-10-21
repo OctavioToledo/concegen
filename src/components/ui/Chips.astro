@@ -1,0 +1,20 @@
+---
+// Chips con selección múltiple (checkbox).
+interface Props {
+  name: string;
+  rotulo: string;
+  opciones: { valor: string; texto: string }[];
+}
+const { name, rotulo, opciones } = Astro.props;
+---
+<fieldset class="pila-chica">
+  <legend class="grupo-rotulo">{rotulo}</legend>
+  <div class="chips">
+    {opciones.map((o) => (
+      <label class="chip">
+        <input type="checkbox" name={name} value={o.valor} />
+        {o.texto}
+      </label>
+    ))}
+  </div>
+</fieldset>

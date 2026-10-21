@@ -1,0 +1,23 @@
+---
+// Barra fija abajo en el celular: precio a la izquierda y el botón principal a la derecha.
+import type { Auto } from '../../schema/auto';
+import BotonWhatsApp from '../ui/BotonWhatsApp.astro';
+import { precio } from '../../lib/formato';
+
+interface Props {
+  auto: Auto;
+  href: string;
+  motivo: 'consulta' | 'similar';
+  texto: string;
+}
+const { auto, href, motivo, texto } = Astro.props;
+const vendido = auto.estado === 'vendido';
+---
+<div class="barra-ficha">
+  {vendido
+    ? <span class="barra-ficha-precio chico">Vendido</span>
+    : auto.precio === null
+      ? <span class="barra-ficha-precio chico">Consultar precio</span>
+      : <span class="barra-ficha-precio angosto">{precio(auto.precio, auto.moneda)}</span>}
+  <BotonWhatsApp href={href} origen="ficha" motivo={motivo} auto={auto.slug}>{texto}</BotonWhatsApp>
+</div>

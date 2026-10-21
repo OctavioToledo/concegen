@@ -1,0 +1,17 @@
+---
+// Rótulo visible siempre arriba, error explicado en texto debajo.
+interface Props {
+  id: string;
+  rotulo: string;
+  ayuda?: string;
+  error?: string;            // texto del error que muestra el script
+  class?: string;
+}
+const { id, rotulo, ayuda, error, class: clase } = Astro.props;
+---
+<div class:list={['campo', clase]} data-campo={id}>
+  <label for={id}>{rotulo}</label>
+  {ayuda && <p class="ayuda" id={`${id}-ayuda`}>{ayuda}</p>}
+  <slot />
+  <p class="error" id={`${id}-error`} data-error={error} hidden></p>
+</div>

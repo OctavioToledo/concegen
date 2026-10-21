@@ -1,0 +1,131 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import Galeria from '../../components/auto/Galeria.astro';
+import Cartel from '../../components/auto/Cartel.astro';
+import DatosClave from '../../components/auto/DatosClave.astro';
+import TablaSpecs from '../../components/auto/TablaSpecs.astro';
+import Equipamiento from '../../components/auto/Equipamiento.astro';
+import BarraFicha from '../../components/auto/BarraFicha.astro';
+import Parecidos from '../../components/auto/Parecidos.astro';
+import BotonWhatsApp from '../../components/ui/BotonWhatsApp.astro';
+import Icono from '../../components/ui/Icono.astro';
+import { agencia, absoluta } from '../../lib/agencia';
+import { todos, parecidos } from '../../lib/stock';
+import { whatsappUrl, mensajeFicha } from '../../lib/whatsapp';
+import { nombre } from '../../lib/etiquetas';
+import { descripcionAuto, jsonLdAuto, ogImagenAuto, tituloAuto } from '../../lib/seo';
+import type { Auto } from '../../schema/auto';
+
+export const getStaticPaths = (() => todos().map((auto) => ({ params: { slug: auto.slug }, props: { auto } }))) satisfies GetStaticPaths;
+
+interface Props { auto: Auto }
+const { auto } = Astro.props;
+
+const link = absoluta(`/autos/${auto.slug}`);
+const wa = (motivo: Parameters<typeof mensajeFicha>[2]) => whatsappUrl(agencia.contacto.whatsapp, mensajeFicha(auto, link, motivo));
+const vendido = auto.estado === 'vendido';
+const reservado = auto.estado === 'reservado';
+const principal = vendido
+  ? { href: wa('similar'), motivo: 'similar' as const, texto: 'Buscar uno similar' }
+  : { href: wa('consulta'), motivo: 'consulta' as const, texto: 'Consultar por WhatsApp' };
+const similares = parecidos(auto);
+const imagen = ogImagenAuto(auto);
+---
+<Base
+  titulo={tituloAuto(auto)}
+  descripcion={descripcionAuto(auto)}
+  imagen={imagen}
+  ogTipo="product"
+  jsonLd={jsonLdAuto(auto, link, imagen)}
+  flotante={false}
+>
+  <div class="ficha-contenido">
+    <div class="contenedor ficha-nav">
+      <a href="/stock" data-volver><Icono nombre="atras" /><span>Ver todo el stock</span></a>
+      <button type="button" data-compartir data-url={link} data-titulo={tituloAuto(auto)} hidden>
+        <Icono nombre="compartir" />Compartir
+      </button>
+    </div>
+
+    <div class:list={['contenedor ficha', vendido && 'es-vendido']}>
+      <div>
+        <Galeria auto={auto} />
+      </div>
+
+      <div class="ficha-info">
+        <div class="ficha-titulo">
+          <h1>{nombre(auto)}</h1>
+          <p class="suave">{auto.version}</p>
+        </div>
+
+        <div><Cartel auto={auto} grande /></div>
+
+        {reservado && <p class="aviso-estado">Este auto está reservado. Consultanos si se libera.</p>}
+        {vendido && <p class="aviso-estado aviso-estado--vendido">Este auto ya se vendió. Te mostramos otros parecidos.</p>}
+
+        <DatosClave auto={auto} />
+
+        <div class="acciones">
+          <BotonWhatsApp href={principal.href} origen="ficha" motivo={principal.motivo} auto={auto.slug} class="solo-escritorio">
+            {principal.texto}
+          </BotonWhatsApp>
+          {!vendido && agencia.secciones.financiacion && (
+            <BotonWhatsApp href={wa('financiacion')} variante="secundario" origen="ficha" motivo="financiacion" auto={auto.slug}>
+              Consultar financiación
+            </BotonWhatsApp>
+          )}
+          {!vendido && (
+            <BotonWhatsApp href={wa('test_drive')} variante="secundario" origen="ficha" motivo="test_drive" auto={auto.slug}>
+              Coordinar test drive
+            </BotonWhatsApp>
+          )}
+        </div>
+      </div>
+    </div>
+
+    {vendido && (
+      <div class="contenedor seccion">
+        <Parecidos autos={similares} titulo="Otros parecidos" />
+      </div>
+    )}
+
+    <div class="contenedor seccion dos-columnas">
+      <TablaSpecs auto={auto} />
+      <div class="pila-grande">
+        <Equipamiento items={auto.equipamiento} />
+        {auto.descripcion && (
+          <section aria-labelledby="desc-titulo" class="pila">
+            <h2 id="desc-titulo">Descripción</h2>
+            <p>{auto.descripcion}</p>
+          </section>
+        )}
+      </div>
+    </div>
+
+    {!vendido && (
+      <div class="contenedor seccion">
+        <Parecidos autos={similares} />
+      </div>
+    )}
+  </div>
+
+  <BarraFicha slot="fijo" auto={auto} href={principal.href} motivo={principal.motivo} texto={principal.texto} />
+</Base>
+
+<script>
+  import { iniciarCompartir } from '../../scripts/compartir';
+  iniciarCompartir();
+
+  // «Volver a tu búsqueda» recuerda los filtros con los que se llegó. Si se entró directo, «Ver todo el stock».
+  try {
+    const busqueda = sessionStorage.getItem('busqueda');
+    const volver = document.querySelector<HTMLAnchorElement>('[data-volver]');
+    if (busqueda !== null && volver) {
+      volver.href = `/stock${busqueda}`;
+      volver.querySelector('span')!.textContent = 'Volver a tu búsqueda';
+    }
+  } catch {
+    // modo privado: queda «Ver todo el stock»
+  }
+</script>

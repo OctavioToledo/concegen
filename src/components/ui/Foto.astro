@@ -1,0 +1,49 @@
+---
+// Foto optimizada: AVIF y WebP, anchos de 360 a 1440.
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { ANCHOS } from '../../lib/fotos';
+
+interface Props {
+  src: ImageMetadata | string;
+  alt: string;
+  sizes: string;
+  proporcion?: '32' | '43';
+  prioridad?: boolean;       // la foto LCP: carga inmediata y fetchpriority alto
+  inmediata?: boolean;       // carga inmediata sin prioridad (las dos primeras de la grilla)
+  transicion?: string;       // view-transition-name
+  anchos?: number[];
+  class?: string;
+}
+const { src, alt, sizes, proporcion = '32', prioridad = false, inmediata = false, transicion, anchos = ANCHOS, class: clase } = Astro.props;
+const remota = typeof src === 'string';
+---
+{remota ? (
+  <Picture
+    src={src}
+    alt={alt}
+    inferSize
+    formats={['avif', 'webp']}
+    widths={anchos}
+    sizes={sizes}
+    loading={prioridad || inmediata ? 'eager' : 'lazy'}
+    fetchpriority={prioridad ? 'high' : undefined}
+    class:list={['foto', `foto-${proporcion}`, clase]}
+    style={transicion ? `view-transition-name:${transicion}` : undefined}
+  />
+) : (
+  <Picture
+    src={src}
+    alt={alt}
+    formats={['avif', 'webp']}
+    fallbackFormat="jpg"
+    widths={anchos}
+    sizes={sizes}
+    quality={proporcion === '43' && prioridad ? 62 : 68}
+    loading={prioridad || inmediata ? 'eager' : 'lazy'}
+    decoding={prioridad ? 'sync' : 'async'}
+    fetchpriority={prioridad ? 'high' : undefined}
+    class:list={['foto', `foto-${proporcion}`, clase]}
+    style={transicion ? `view-transition-name:${transicion}` : undefined}
+  />
+)}
