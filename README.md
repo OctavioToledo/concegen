@@ -32,3 +32,12 @@ Para fotos que todavía no están, `npm run placeholders` genera la silueta de l
 - Calibrar los precios de `src/data/autos.ts` (son estimados a octubre de 2026).
 - Las fotos actuales son de Wikimedia Commons (licencias CC, créditos en `src/data/creditos.json` y en `/creditos`). Para cada agencia, reemplazarlas por las fotos de su stock real.
 - Cargar el ID de Umami en `analitica` cuando exista la cuenta.
+
+## Deploy (Cloudflare Workers)
+
+El sitio es estático: `wrangler.jsonc` publica `dist/` como assets, sin adaptador de servidor.
+
+- Comando de build: `npm run build`
+- Comando de deploy: `npx wrangler deploy`
+
+`_headers` (noindex, caché y seguridad) y `_redirects` se generan en el build. No hace falta `astro add cloudflare`: si Wrangler lo propone, es porque falta `wrangler.jsonc`.

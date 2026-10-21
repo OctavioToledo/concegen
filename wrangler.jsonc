@@ -1,0 +1,15 @@
+// Cloudflare Workers: el sitio es 100 % estático, así que el Worker solo sirve dist/.
+// Sin este archivo, «wrangler deploy» intenta configurar el proyecto solo (astro add cloudflare)
+// y lo convierte en un sitio con adaptador de servidor, que no es lo que queremos.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "concegen",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // /stock sirve stock.html; las URLs viejas con barra final redirigen.
+    "html_handling": "auto-trailing-slash",
+    // Una ruta que no existe muestra dist/404.html con estado 404.
+    "not_found_handling": "404-page"
+  }
+}

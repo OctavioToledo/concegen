@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "test": "vitest run",
-    "placeholders": "node herramientas/placeholders.ts"
+    "placeholders": "node herramientas/placeholders.ts",
+    "deploy": "astro build && wrangler deploy"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.11",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.5"
+    "vitest": "^5.0.5",
+    "wrangler": "^4.151.3"
   }
 }

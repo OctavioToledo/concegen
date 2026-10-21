@@ -1,6 +1,8 @@
 ---
-// Foto optimizada: AVIF y WebP, anchos de 360 a 1440.
-import { Picture } from 'astro:assets';
+// Foto optimizada: WebP en anchos de 360 a 1440.
+// Solo WebP: lo soportan todos los navegadores actuales y se genera mucho más rápido que AVIF,
+// así el build entra holgado en el tiempo de Cloudflare.
+import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { ANCHOS } from '../../lib/fotos';
 
@@ -16,34 +18,17 @@ interface Props {
   class?: string;
 }
 const { src, alt, sizes, proporcion = '32', prioridad = false, inmediata = false, transicion, anchos = ANCHOS, class: clase } = Astro.props;
-const remota = typeof src === 'string';
+const comunes = {
+  alt,
+  format: 'webp' as const,
+  widths: anchos,
+  sizes,
+  quality: proporcion === '43' && prioridad ? 64 : 70,
+  loading: prioridad || inmediata ? ('eager' as const) : ('lazy' as const),
+  decoding: prioridad ? ('sync' as const) : ('async' as const),
+  fetchpriority: prioridad ? ('high' as const) : undefined,
+  class: ['foto', `foto-${proporcion}`, clase].filter(Boolean).join(' '),
+  style: transicion ? `view-transition-name:${transicion}` : undefined,
+};
 ---
-{remota ? (
-  <Picture
-    src={src}
-    alt={alt}
-    inferSize
-    formats={['avif', 'webp']}
-    widths={anchos}
-    sizes={sizes}
-    loading={prioridad || inmediata ? 'eager' : 'lazy'}
-    fetchpriority={prioridad ? 'high' : undefined}
-    class:list={['foto', `foto-${proporcion}`, clase]}
-    style={transicion ? `view-transition-name:${transicion}` : undefined}
-  />
-) : (
-  <Picture
-    src={src}
-    alt={alt}
-    formats={['avif', 'webp']}
-    fallbackFormat="jpg"
-    widths={anchos}
-    sizes={sizes}
-    quality={proporcion === '43' && prioridad ? 62 : 68}
-    loading={prioridad || inmediata ? 'eager' : 'lazy'}
-    decoding={prioridad ? 'sync' : 'async'}
-    fetchpriority={prioridad ? 'high' : undefined}
-    class:list={['foto', `foto-${proporcion}`, clase]}
-    style={transicion ? `view-transition-name:${transicion}` : undefined}
-  />
-)}
+{typeof src === 'string' ? <Image src={src} inferSize {...comunes} /> : <Image src={src} {...comunes} />}
