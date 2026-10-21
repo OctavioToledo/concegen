@@ -1,23 +1,32 @@
 ---
-// Tarjeta del stock: sin caja ni sombra. Toda la tarjeta es un solo link.
+// Tarjeta del stock: foto limpia, la condición, el nombre, los datos en una línea, el precio y dos acciones.
 import type { Auto } from '../../schema/auto';
-import Cartel from './Cartel.astro';
 import Foto from '../ui/Foto.astro';
+import Icono from '../ui/Icono.astro';
 import { fotoAuto, SIZES } from '../../lib/fotos';
-import { nombre, resumenMecanico, slugTexto } from '../../lib/etiquetas';
+import { combustibles, nombre, slugTexto, transmisiones } from '../../lib/etiquetas';
 import { precioComparable } from '../../lib/stock';
+import { agencia, absoluta } from '../../lib/agencia';
+import { whatsappUrl, mensajeFicha } from '../../lib/whatsapp';
+import { km, precio } from '../../lib/formato';
 
 interface Props {
   auto: Auto;
-  inmediata?: boolean;       // las dos primeras de la grilla
+  inmediata?: boolean;       // las primeras de la grilla
+  prioridad?: boolean;       // la primera del stock: es el LCP
   datos?: boolean;           // atributos data-* para filtrar en /stock
   orden?: number;            // posición en Recomendados
   sizes?: string;
   encabezado?: 'h2' | 'h3';
 }
-const { auto, inmediata = false, datos = false, orden, sizes = SIZES.tarjeta, encabezado = 'h3' } = Astro.props;
+const { auto, inmediata = false, prioridad = false, datos = false, orden, sizes = SIZES.tarjeta, encabezado = 'h3' } = Astro.props;
 const portada = auto.fotos[0];
 const Titulo = encabezado;
+const href = `/autos/${auto.slug}`;
+const vendido = auto.estado === 'vendido';
+const reservado = auto.estado === 'reservado';
+const condicion = vendido ? 'Vendido' : reservado ? 'Reservado' : auto.condicion === '0km' ? '0 km' : 'Usado';
+const wa = whatsappUrl(agencia.contacto.whatsapp, mensajeFicha(auto, absoluta(href), vendido ? 'similar' : 'consulta'));
 const atributos = datos
   ? {
       'data-auto': '',
@@ -36,20 +45,35 @@ const atributos = datos
     }
   : {};
 ---
-<article class:list={[auto.estado === 'vendido' && 'es-vendido']} {...atributos}>
-  <a class="tarjeta" href={`/autos/${auto.slug}`}>
-    <Foto
-      src={fotoAuto(portada.src)!}
-      alt={portada.alt}
-      sizes={sizes}
-      inmediata={inmediata}
-      transicion={datos ? `foto-${auto.slug}` : undefined}
-    />
-    <Cartel auto={auto} />
-    <div class="tarjeta-texto">
-      <Titulo class="tarjeta-nombre">{nombre(auto)}</Titulo>
-      <p class="tarjeta-version">{auto.version}</p>
-      <p class="tarjeta-mecanica">{resumenMecanico(auto)}</p>
-    </div>
+<article class:list={['tarjeta', vendido && 'es-vendido']} {...atributos}>
+  <a class="tarjeta-foto" href={href} tabindex="-1" aria-label={`${nombre(auto)}, ver detalle`}>
+    <Foto src={fotoAuto(portada.src)!} alt="" sizes={sizes} inmediata={inmediata} prioridad={prioridad} transicion={datos ? `foto-${auto.slug}` : undefined} />
   </a>
+  <div class="tarjeta-cuerpo">
+    <p class:list={['tarjeta-condicion', `tarjeta-condicion--${vendido ? 'vendido' : reservado ? 'reservado' : auto.condicion}`]}>{condicion}</p>
+    <Titulo class="tarjeta-nombre"><a href={href}>{nombre(auto)}<span class="sr">, {condicion.toLowerCase()}</span></a></Titulo>
+    <p class="tarjeta-version">{auto.version}</p>
+    <ul class="specs" aria-label="Datos">
+      <li>{auto.anio}</li>
+      <li>{auto.condicion === '0km' ? '0 km' : km(auto.km)}</li>
+      <li>{transmisiones[auto.transmision]}</li>
+      <li>{combustibles[auto.combustible]}</li>
+    </ul>
+    <div class="tarjeta-pie">
+      <p class="tarjeta-precio">
+        {vendido
+          ? <span class="tarjeta-precio-nota">Ya se vendió</span>
+          : auto.precio === null
+            ? <span class="tarjeta-precio-nota">Consultar precio</span>
+            : precio(auto.precio, auto.moneda)}
+      </p>
+      <div class="tarjeta-acciones">
+        <a class="flecha" href={href}>Ver detalle<span class="sr">: {nombre(auto)}</span></a>
+        <a class="wa wa-icono" href={wa} target="_blank" rel="noopener" aria-label={`Consultar por WhatsApp: ${nombre(auto)}`}
+           data-wa-origen="tarjeta" data-wa-motivo={vendido ? 'similar' : 'consulta'} data-wa-auto={auto.slug}>
+          <Icono nombre="whatsapp" />
+        </a>
+      </div>
+    </div>
+  </div>
 </article>

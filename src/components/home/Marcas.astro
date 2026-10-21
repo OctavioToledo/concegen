@@ -1,0 +1,24 @@
+---
+// Las marcas del stock como una fila de texto, cada una con su cantidad.
+import { marcasYModelos, todos } from '../../lib/stock';
+import { slugTexto } from '../../lib/etiquetas';
+
+const autos = todos().filter((a) => a.estado !== 'vendido');
+const marcas = marcasYModelos()
+  .map((m) => ({ ...m, cantidad: autos.filter((a) => slugTexto(a.marca) === m.slug).length }))
+  .filter((m) => m.cantidad > 0);
+---
+<section class="banda" aria-labelledby="marcas-titulo">
+  <div class="contenedor">
+    <h2 id="marcas-titulo" class="sr">Marcas</h2>
+    <ul class="marcas">
+      {marcas.map((m) => (
+        <li>
+          <a href={`/stock?marca=${m.slug}`} class="marca">
+            {m.nombre} <span class="marca-cantidad">{m.cantidad}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

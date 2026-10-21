@@ -1,40 +1,64 @@
 ---
-// Foto del auto destacado a sangre (LCP) con su cartel. Modo alternativo: la foto del local.
-import { agencia } from '../../lib/agencia';
-import { autoHero } from '../../lib/stock';
-import { fotoAuto, fotoAgencia, SIZES } from '../../lib/fotos';
+// Portada: la foto a sangre, sin nada encima. El nombre, el precio y los links van debajo, centrados.
+// Sin JavaScript se desliza con el dedo (scroll-snap); con JavaScript suma flechas, puntos y avance automático con pausa.
+import { agencia, absoluta } from '../../lib/agencia';
+import { autoHero, destacados } from '../../lib/stock';
+import { fotoAuto, fotoAgencia } from '../../lib/fotos';
 import { nombre } from '../../lib/etiquetas';
+import { precio } from '../../lib/formato';
+import { whatsappUrl, mensajeFicha } from '../../lib/whatsapp';
 import Foto from '../ui/Foto.astro';
-import Cartel from '../auto/Cartel.astro';
-import BuscadorRapido from './BuscadorRapido.astro';
+import Icono from '../ui/Icono.astro';
 
-const auto = autoHero();
+const primero = autoHero();
+const slides = primero ? [primero, ...destacados().filter((a) => a.id !== primero.id)].slice(0, 4) : [];
 const fotoLocal = agencia.hero.tipo === 'foto' ? fotoAgencia(agencia.hero.src) : undefined;
+const SIZES = '100vw';
 ---
-<section class="contenedor hero" aria-labelledby="hero-titulo">
-  <div>
-    {auto ? (
-      <>
-        <a href={`/autos/${auto.slug}`} class="hero-foto" style="display:block" tabindex="-1" aria-hidden="true">
-          <Foto src={fotoAuto(auto.fotos[0].src)!} alt="" sizes={SIZES.hero} proporcion="43" prioridad />
-        </a>
-        <div class="hero-cartel"><Cartel auto={auto} /></div>
-        <div class="hero-auto entre">
-          <div>
-            <p class="ancho" style="font-size: var(--t-h2)">{nombre(auto)}</p>
-            <p class="suave">{auto.version}</p>
+{slides.length > 0 ? (
+  <section class="portada" aria-roledescription="carrusel" aria-label="Autos destacados" data-slider>
+    <div class="portada-pista" data-pista>
+      {slides.map((a, i) => (
+        <article class="slide" aria-roledescription="diapositiva" aria-label={`${i + 1} de ${slides.length}: ${nombre(a)}`} id={`slide-${i}`}>
+          <a href={`/autos/${a.slug}`} class="slide-imagen" tabindex="-1" aria-label={`${nombre(a)}, ver esta unidad`}>
+            <Foto src={fotoAuto(a.fotos[0].src)!} alt="" sizes={SIZES} proporcion="libre" prioridad={i === 0} anchos={[480, 768, 1080, 1440, 1920]} class="slide-foto" />
+          </a>
+          <div class="slide-texto contenedor">
+            <p class="slide-condicion">{a.condicion === '0km' ? '0 km' : `Usado, ${a.anio}`}</p>
+            <h2 class="slide-nombre">{nombre(a)}</h2>
+            <p class="slide-version">
+              {a.version}
+              {a.precio !== null && <span class="slide-precio">{precio(a.precio, a.moneda)}</span>}
+            </p>
+            <p class="slide-links">
+              <a class="flecha" href={`/autos/${a.slug}`}>Ver esta unidad<span class="sr">: {nombre(a)}</span></a>
+              <a class="flecha" href={whatsappUrl(agencia.contacto.whatsapp, mensajeFicha(a, absoluta(`/autos/${a.slug}`), 'consulta'))}
+                 target="_blank" rel="noopener" data-wa-origen="portada" data-wa-motivo="consulta" data-wa-auto={a.slug}>Consultar por WhatsApp</a>
+            </p>
           </div>
-          <a href={`/autos/${auto.slug}`} class="boton">Ver esta unidad<span class="sr">: {nombre(auto)} {auto.version}</span></a>
+        </article>
+      ))}
+    </div>
+    {slides.length > 1 && (
+      <div class="portada-controles contenedor">
+        <button type="button" data-ant aria-label="Anterior"><Icono nombre="anterior" /></button>
+        <div class="portada-puntos" role="group" aria-label="Elegir diapositiva">
+          {slides.map((a, i) => (
+            <button type="button" data-ir={i} aria-label={`Ver ${nombre(a)}`} aria-current={i === 0 ? 'true' : 'false'} aria-controls={`slide-${i}`}></button>
+          ))}
         </div>
-      </>
-    ) : fotoLocal && agencia.hero.tipo === 'foto' ? (
-      <div class="hero-foto">
-        <Foto src={fotoLocal} alt={agencia.hero.alt} sizes={SIZES.hero} proporcion="43" prioridad />
+        <button type="button" data-sig aria-label="Siguiente"><Icono nombre="siguiente" /></button>
+        <button type="button" data-pausa aria-label="Pausar el avance automático" hidden><Icono nombre="pausa" /></button>
       </div>
-    ) : null}
-  </div>
-  <div>
-    <h1 id="hero-titulo" class="hero-titulo">{agencia.eslogan}</h1>
-    <BuscadorRapido />
-  </div>
-</section>
+    )}
+  </section>
+) : fotoLocal && agencia.hero.tipo === 'foto' ? (
+  <section class="portada" aria-label={agencia.nombre}>
+    <Foto src={fotoLocal} alt={agencia.hero.alt} sizes={SIZES} proporcion="libre" prioridad class="slide-foto" />
+  </section>
+) : null}
+
+<script>
+  import { iniciarSlider } from '../../scripts/slider';
+  iniciarSlider();
+</script>

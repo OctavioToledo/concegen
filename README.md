@@ -1,6 +1,6 @@
 # Demo para concesionarias
 
-Sitio estático en Astro para agencias de autos. El diseño completo está en `design (1).md`.
+Sitio estático en Astro para agencias de autos. La estructura y las funciones están en `design (1).md`; el lenguaje visual (blanco y carbón, cero radios, títulos en peso 300) sigue `idea.md`.
 
 ```sh
 npm install
@@ -30,5 +30,5 @@ Para fotos que todavía no están, `npm run placeholders` genera la silueta de l
 ## Pendiente antes de mostrar la demo
 
 - Calibrar los precios de `src/data/autos.ts` (son estimados a octubre de 2026).
-- Reemplazar las fotos placeholder por fotos reales y registrar los créditos.
+- Las fotos actuales son de Wikimedia Commons (licencias CC, créditos en `src/data/creditos.json` y en `/creditos`). Para cada agencia, reemplazarlas por las fotos de su stock real.
 - Cargar el ID de Umami en `analitica` cuando exista la cuenta.

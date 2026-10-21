@@ -12,10 +12,15 @@ if (!agencia.secciones.financiacion) return Astro.redirect('/');
 const autos = disponibles();
 ---
 <Base titulo="Financiación" descripcion={`Financiá tu próximo auto en ${agencia.nombre}. Contanos el anticipo y las cuotas, y te armamos una propuesta por WhatsApp.`}>
-  <div class="contenedor pagina-cabecera dos-columnas">
+  <div class="cabecera-pagina">
+    <div class="contenedor">
+      <nav class="migas" aria-label="Ruta"><a href="/">Inicio</a><span aria-hidden="true">/</span><span aria-current="page">Financiación</span></nav>
+      <h1>Financiación</h1>
+    </div>
+  </div>
+  <div class="contenedor seccion-chica dos-columnas">
     <div class="pila-grande">
       <div class="pila">
-        <h1>Financiación</h1>
         <p>Contanos qué auto te interesa, con cuánto contás de anticipo y en cuántas cuotas querés pagar el resto. Te respondemos por WhatsApp con una propuesta.</p>
       </div>
 

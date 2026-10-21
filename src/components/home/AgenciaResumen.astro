@@ -1,21 +1,24 @@
 ---
-// Foto del local, dirección, estado del horario y «Cómo llegar». Sin mapa embebido al cargar.
+// Dirección, horario y mapa en una banda gris. El mapa embebido carga solo si el usuario lo toca.
 import { agencia } from '../../lib/agencia';
-import { fotoAgencia } from '../../lib/fotos';
-import Foto from '../ui/Foto.astro';
+import { whatsappUrl } from '../../lib/whatsapp';
+import { mensajes } from '../../config/mensajes';
 import Horario from '../sitio/Horario.astro';
+import Mapa from '../sitio/Mapa.astro';
 
-const foto = agencia.laAgencia.fotoLocal ? fotoAgencia(agencia.laAgencia.fotoLocal) : undefined;
+const href = whatsappUrl(agencia.contacto.whatsapp, mensajes.general({ agencia: agencia.nombre }));
 ---
-<section class="contenedor seccion resumen-agencia" aria-labelledby="agencia-titulo">
-  {foto && <Foto src={foto} alt={`Frente de ${agencia.nombre}`} sizes="(min-width: 900px) 55vw, 100vw" />}
-  <div class="pila">
-    <h2 id="agencia-titulo">Visitanos en {agencia.ciudad.split(',')[0]}</h2>
-    <p>{agencia.contacto.direccion}</p>
-    <Horario />
-    <div class="fila">
-      <a class="boton" href={agencia.contacto.mapsUrl} target="_blank" rel="noopener">Cómo llegar</a>
-      <a class="boton boton-texto" href="/la-agencia">Conocé la agencia</a>
+<section class="banda seccion" aria-labelledby="agencia-titulo">
+  <div class="contenedor visita">
+    <div class="pila">
+      <h2 id="agencia-titulo">Visitanos en {agencia.ciudad.split(',')[0]}</h2>
+      <p>{agencia.contacto.direccion}</p>
+      <Horario />
+      <p class="pila-chica">
+        <a class="flecha" href={href} target="_blank" rel="noopener" data-wa-origen="contacto">Escribinos por WhatsApp</a><br />
+        <a class="flecha" href={agencia.contacto.mapsUrl} target="_blank" rel="noopener">Cómo llegar</a>
+      </p>
     </div>
+    <Mapa />
   </div>
 </section>

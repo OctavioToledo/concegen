@@ -8,7 +8,7 @@ export const agencia = {
   eslogan: 'Elegí tu próximo auto y consultalo por WhatsApp.',
   ciudad: 'San Martín, Mendoza',
   logo: null,
-  colores: { primario: '#0F3B57', acento: '#F0A202', fondo: '#F3F5F7' },
+  colores: { primario: '#262626', acento: '#F1F1F1', fondo: '#FFFFFF' },
   contacto: {
     whatsapp: '5492634280036',
     telefono: '263 428-0036',
@@ -39,7 +39,7 @@ export const agencia = {
       'Cada usado pasa por una revisión mecánica antes de entrar al stock y se entrega con la documentación al día. Si querés, tomamos tu auto como parte de pago y te ayudamos con la financiación.',
       'Atendemos por WhatsApp todos los días hábiles: mandanos el auto que te interesa y coordinamos una visita o un test drive.',
     ],
-    fotoLocal: 'agencia/local.jpg',
+    fotoLocal: null,
     fundacion: null,
   },
   testimonios: [],

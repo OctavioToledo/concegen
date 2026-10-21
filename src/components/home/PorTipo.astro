@@ -1,21 +1,67 @@
 ---
-// Accesos por carrocería, con cantidades reales del stock.
-import { conteoPorCarroceria } from '../../lib/stock';
+// Pestañas por carrocería sobre una grilla de tarjetas. Sin JavaScript se ven los primeros autos de todos los tipos.
+import { conteoPorCarroceria, disponibles } from '../../lib/stock';
 import { carroceriasPlural } from '../../lib/etiquetas';
+import TarjetaAuto from '../auto/TarjetaAuto.astro';
 
+const autos = disponibles();
 const tipos = conteoPorCarroceria();
+const MAX = 8;
 ---
-{tipos.length > 1 && (
-  <section class="contenedor seccion" aria-labelledby="tipos-titulo">
-    <h2 id="tipos-titulo" class="cabecera-seccion">Por tipo</h2>
-    <ul class="chips">
-      {tipos.map((t) => (
-        <li>
-          <a class="chip" href={`/stock?carr=${t.carroceria}`}>
-            {carroceriasPlural[t.carroceria]} <span class="chip-cantidad">{t.cantidad}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </section>
-)}
+<section class="contenedor seccion" aria-labelledby="tipos-titulo" data-pestanas data-max={MAX}>
+  <div class="titulo-seccion">
+    <h2 id="tipos-titulo">Nuestro stock</h2>
+    <p>Unidades 0 km y usadas, listas para ver y probar.</p>
+  </div>
+  <div class="pestanas" role="tablist" aria-label="Filtrar por tipo">
+    <button type="button" role="tab" aria-selected="true" data-tipo="">Todos <span class="pestana-cantidad">{autos.length}</span></button>
+    {tipos.map((t) => (
+      <button type="button" role="tab" aria-selected="false" data-tipo={t.carroceria}>
+        {carroceriasPlural[t.carroceria]} <span class="pestana-cantidad">{t.cantidad}</span>
+      </button>
+    ))}
+  </div>
+  <div class="grilla-tarjetas" role="tabpanel" aria-labelledby="tipos-titulo" data-panel>
+    {autos.map((a, i) => (
+      <div data-carr={a.carroceria} hidden={i >= MAX}>
+        <TarjetaAuto auto={a} />
+      </div>
+    ))}
+  </div>
+  <p class="centrado"><a href="/stock" class="flecha" data-ver-tipo>Ver los {autos.length} autos disponibles</a></p>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-pestanas]').forEach((seccion) => {
+    const max = Number(seccion.dataset.max ?? 8);
+    const pestanas = [...seccion.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const items = [...seccion.querySelectorAll<HTMLElement>('[data-panel] > [data-carr]')];
+    const ver = seccion.querySelector<HTMLAnchorElement>('[data-ver-tipo]')!;
+
+    const elegir = (b: HTMLButtonElement) => {
+      const tipo = b.dataset.tipo ?? '';
+      pestanas.forEach((p) => {
+        p.setAttribute('aria-selected', String(p === b));
+        p.tabIndex = p === b ? 0 : -1;
+      });
+      const coinciden = items.filter((i) => !tipo || i.dataset.carr === tipo);
+      items.forEach((i) => (i.hidden = !coinciden.slice(0, max).includes(i)));
+      const n = coinciden.length;
+      const nombre = b.firstChild?.textContent?.trim().toLowerCase() ?? '';
+      ver.href = tipo ? `/stock?carr=${tipo}` : '/stock';
+      ver.textContent = tipo ? `Ver ${n === 1 ? 'la unidad' : `las ${n} unidades`}: ${nombre}` : `Ver los ${n} autos disponibles`;
+    };
+
+    pestanas.forEach((b, i) => {
+      b.tabIndex = i === 0 ? 0 : -1;
+      b.addEventListener('click', () => elegir(b));
+      b.addEventListener('keydown', (e) => {
+        const paso = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!paso) return;
+        const sig = pestanas[(i + paso + pestanas.length) % pestanas.length];
+        sig.focus();
+        elegir(sig);
+      });
+    });
+  });
+</script>

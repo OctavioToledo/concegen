@@ -1,7 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import Hero from '../components/home/Hero.astro';
-import Destacados from '../components/home/Destacados.astro';
+import BuscadorRapido from '../components/home/BuscadorRapido.astro';
+import Marcas from '../components/home/Marcas.astro';
 import PorTipo from '../components/home/PorTipo.astro';
 import Servicios from '../components/home/Servicios.astro';
 import AgenciaResumen from '../components/home/AgenciaResumen.astro';
@@ -17,7 +18,8 @@ const cantidad = todos().filter((a) => a.estado !== 'vendido').length;
   descripcion={`${cantidad} autos 0 km y usados en ${agencia.ciudad}. Consultá cualquier unidad por WhatsApp.`}
 >
   <Hero />
-  <Destacados />
+  <BuscadorRapido />
+  <Marcas />
   <PorTipo />
   <Servicios />
   <Testimonios />

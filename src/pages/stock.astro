@@ -10,10 +10,13 @@ import { todos } from '../lib/stock';
 const autos = todos();
 ---
 <Base titulo="Stock" descripcion={`Autos 0 km y usados de ${agencia.nombre}, en ${agencia.ciudad}. Filtrá por marca, precio, año y más.`}>
-  <div class="contenedor stock-cabecera">
-    <h1 id="stock-titulo" tabindex="-1">Stock</h1>
-    <p class="suave" id="stock-cantidad">{autos.length} autos</p>
-    <p class="sr" aria-live="polite" id="anuncio-cantidad"></p>
+  <div class="cabecera-pagina">
+    <div class="contenedor">
+      <nav class="migas" aria-label="Ruta"><a href="/">Inicio</a><span aria-hidden="true">/</span><span aria-current="page">Stock</span></nav>
+      <h1 id="stock-titulo" tabindex="-1">Stock de {agencia.nombre}</h1>
+      <p id="stock-cantidad">{autos.length} autos</p>
+      <p class="sr" aria-live="polite" id="anuncio-cantidad"></p>
+    </div>
   </div>
 
   <BarraStock />
@@ -29,7 +32,7 @@ const autos = todos();
         }
       </script>
       <div id="grilla-stock" class="grilla-stock">
-        {autos.map((a, i) => <TarjetaAuto auto={a} datos orden={i} inmediata={i < 2} encabezado="h2" />)}
+        {autos.map((a, i) => <TarjetaAuto auto={a} datos orden={i} inmediata={i < 3} prioridad={i === 0} encabezado="h2" />)}
       </div>
       <script>
         import '../scripts/filtros';

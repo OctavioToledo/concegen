@@ -1,4 +1,6 @@
 ---
+import Icono from '../ui/Icono.astro';
+
 interface Props { items: string[] }
 const { items } = Astro.props;
 ---
@@ -6,7 +8,7 @@ const { items } = Astro.props;
   <section aria-labelledby="equip-titulo" class="pila">
     <h2 id="equip-titulo">Equipamiento</h2>
     <ul class="equipamiento">
-      {items.map((i) => <li>{i}</li>)}
+      {items.map((i) => <li><Icono nombre="check" />{i}</li>)}
     </ul>
   </section>
 )}

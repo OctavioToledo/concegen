@@ -5,21 +5,11 @@ import type { Auto } from '../schema/auto';
 // El slug se arma una vez y no se regenera nunca: es el link que circula por WhatsApp.
 // Precios estimados a octubre de 2026: calibrar antes de mostrar la demo.
 
-const vistas = [
-  'vista delantera',
-  'vista lateral',
-  'vista trasera',
-  'interior, tablero',
-  'interior, asientos traseros',
-  'detalle de la llanta',
-  'baúl o caja de carga',
-  'motor',
-];
-
-function fotos(slug: string, nombre: string, cantidad: number) {
-  return Array.from({ length: cantidad }, (_, i) => ({
+// Fotos de demostración de Wikimedia Commons; los créditos están en src/data/creditos.json.
+function fotos(slug: string, nombre: string, vistas: string[]) {
+  return vistas.map((vista, i) => ({
     src: `${slug}/${String(i + 1).padStart(2, '0')}.jpg`,
-    alt: `${nombre}, ${vistas[i % vistas.length]}`,
+    alt: `${nombre}, ${vista}`,
   }));
 }
 
@@ -35,13 +25,13 @@ export const autos: Auto[] = [
     combustible: 'diesel',
     transmision: 'automatica',
     carroceria: 'pickup',
-    color: 'Gris plata',
+    color: 'Blanco',
     condicion: 'usado',
     precio: 42900,
     moneda: 'USD',
     estado: 'disponible',
     destacado: true,
-    fotos: fotos('toyota-hilux-srx-2022-h7k2', 'Toyota Hilux SRX 2022 gris plata', 8),
+    fotos: fotos('toyota-hilux-srx-2022-h7k2', 'Toyota Hilux SRX 2022 blanca', ['vista delantera', 'vista delantera desde el lado del acompañante']),
     descripcion:
       'Doble cabina 4x4 con caja automática de seis marchas. Único dueño, services oficiales en concesionario Toyota y cubiertas nuevas. Lista para transferir.',
     equipamiento: [
@@ -72,7 +62,7 @@ export const autos: Auto[] = [
     moneda: 'ARS',
     estado: 'disponible',
     destacado: true,
-    fotos: fotos('toyota-corolla-cross-xei-hybrid-2026-p3m8', 'Toyota Corolla Cross XEI Hybrid 0 km blanco perlado', 6),
+    fotos: fotos('toyota-corolla-cross-xei-hybrid-2026-p3m8', 'Toyota Corolla Cross XEI Hybrid 0 km blanco perlado', ['vista delantera', 'vista delantera desde el lado del acompañante', 'vista trasera']),
     descripcion:
       'SUV híbrido con consumo urbano muy bajo y caja automática e-CVT. Entrega inmediata, con garantía oficial de fábrica.',
     equipamiento: [
@@ -96,13 +86,13 @@ export const autos: Auto[] = [
     combustible: 'diesel',
     transmision: 'automatica',
     carroceria: 'pickup',
-    color: 'Negro',
+    color: 'Gris plata',
     condicion: 'usado',
     precio: 38500,
     moneda: 'USD',
     estado: 'reservado',
     destacado: false,
-    fotos: fotos('volkswagen-amarok-v6-highline-2021-r9d4', 'Volkswagen Amarok V6 Highline 2021 negra', 6),
+    fotos: fotos('volkswagen-amarok-v6-highline-2021-r9d4', 'Volkswagen Amarok V6 Highline 2021 gris plata', ['vista delantera', 'vista delantera desde el lado del acompañante']),
     descripcion:
       'Motor V6 de 258 CV con tracción integral permanente. Services al día y estado general muy bueno.',
     equipamiento: [
@@ -125,13 +115,13 @@ export const autos: Auto[] = [
     combustible: 'nafta',
     transmision: 'automatica',
     carroceria: 'suv',
-    color: 'Azul',
+    color: 'Blanco',
     condicion: 'usado',
     precio: 29800,
     moneda: 'USD',
     estado: 'disponible',
     destacado: true,
-    fotos: fotos('volkswagen-taos-highline-2023-k2v7', 'Volkswagen Taos Highline 2023 azul', 5),
+    fotos: fotos('volkswagen-taos-highline-2023-k2v7', 'Volkswagen Taos Highline 2023 blanca', ['vista delantera', 'vista trasera']),
     descripcion:
       'SUV mediano con motor turbo y caja automática Tiptronic de seis marchas. Primera mano, con garantía de fábrica vigente.',
     equipamiento: [
@@ -154,13 +144,13 @@ export const autos: Auto[] = [
     combustible: 'diesel',
     transmision: 'automatica',
     carroceria: 'pickup',
-    color: 'Blanco',
+    color: 'Plata',
     condicion: 'usado',
     precio: 41500,
     moneda: 'USD',
     estado: 'disponible',
     destacado: true,
-    fotos: fotos('ford-ranger-xlt-2024-m5t1', 'Ford Ranger XLT 2024 blanca', 6),
+    fotos: fotos('ford-ranger-xlt-2024-m5t1', 'Ford Ranger XLT 2024 plata', ['vista delantera']),
     descripcion:
       'Nueva generación, doble cabina, caja automática de diez marchas. Poco uso, impecable.',
     equipamiento: [
@@ -189,7 +179,7 @@ export const autos: Auto[] = [
     moneda: 'ARS',
     estado: 'disponible',
     destacado: false,
-    fotos: fotos('ford-territory-titanium-2026-b8q3', 'Ford Territory Titanium 0 km gris', 5),
+    fotos: fotos('ford-territory-titanium-2026-b8q3', 'Ford Territory Titanium 0 km gris', ['vista delantera']),
     descripcion:
       'SUV familiar con pantalla doble de 12 pulgadas y motor turbo. Entrega inmediata.',
     equipamiento: [
@@ -218,7 +208,7 @@ export const autos: Auto[] = [
     moneda: 'ARS',
     estado: 'disponible',
     destacado: false,
-    fotos: fotos('fiat-cronos-drive-2023-c4n6', 'Fiat Cronos Drive 2023 rojo', 5),
+    fotos: fotos('fiat-cronos-drive-2023-c4n6', 'Fiat Cronos Drive 2023 rojo', ['vista delantera', 'interior, tablero', 'interior, asientos']),
     descripcion:
       'Sedán con baúl amplio y consumo bajo. Un dueño, ideal como primer auto o para trabajar.',
     equipamiento: [
@@ -246,7 +236,7 @@ export const autos: Auto[] = [
     moneda: 'USD',
     estado: 'disponible',
     destacado: false,
-    fotos: fotos('fiat-toro-volcano-diesel-2021-w2e9', 'Fiat Toro Volcano diésel 2021 gris oscuro', 5),
+    fotos: fotos('fiat-toro-volcano-diesel-2021-w2e9', 'Fiat Toro Volcano diésel 2021 gris oscuro', ['vista delantera', 'vista trasera']),
     descripcion:
       'Pick-up mediana con caja automática de nueve marchas y tracción 4x4. Muy cómoda para ruta.',
     equipamiento: [
@@ -268,13 +258,13 @@ export const autos: Auto[] = [
     combustible: 'nafta',
     transmision: 'manual',
     carroceria: 'hatchback',
-    color: 'Blanco',
+    color: 'Rojo',
     condicion: '0km',
     precio: 27800000,
     moneda: 'ARS',
     estado: 'disponible',
     destacado: false,
-    fotos: fotos('chevrolet-onix-lt-2026-f6j2', 'Chevrolet Onix LT 0 km blanco', 5),
+    fotos: fotos('chevrolet-onix-lt-2026-f6j2', 'Chevrolet Onix LT 0 km rojo', ['vista delantera']),
     descripcion:
       'Hatchback compacto con motor turbo de bajo consumo. Seis airbags de serie.',
     equipamiento: [
@@ -296,13 +286,13 @@ export const autos: Auto[] = [
     combustible: 'nafta',
     transmision: 'automatica',
     carroceria: 'suv',
-    color: 'Rojo',
+    color: 'Gris',
     condicion: 'usado',
     precio: 31900000,
     moneda: 'ARS',
     estado: 'disponible',
     destacado: true,
-    fotos: fotos('chevrolet-tracker-premier-2022-g1s5', 'Chevrolet Tracker Premier 2022 roja', 5),
+    fotos: fotos('chevrolet-tracker-premier-2022-g1s5', 'Chevrolet Tracker Premier 2022 gris', ['vista delantera', 'vista trasera']),
     descripcion:
       'Versión tope de gama con techo solar y caja automática. Services oficiales.',
     equipamiento: [
@@ -331,7 +321,7 @@ export const autos: Auto[] = [
     moneda: 'ARS',
     estado: 'disponible',
     destacado: false,
-    fotos: fotos('peugeot-208-allure-2022-d3h8', 'Peugeot 208 Allure 2022 gris', 5),
+    fotos: fotos('peugeot-208-allure-2022-d3h8', 'Peugeot 208 Allure 2022 gris', ['vista delantera', 'interior, tablero']),
     descripcion:
       'Hatchback con i-Cockpit y pantalla táctil. Muy bien cuidado, con un solo dueño.',
     equipamiento: [
@@ -359,7 +349,7 @@ export const autos: Auto[] = [
     moneda: 'ARS',
     estado: 'disponible',
     destacado: true,
-    fotos: fotos('peugeot-2008-gt-2026-n7a4', 'Peugeot 2008 GT 0 km azul', 5),
+    fotos: fotos('peugeot-2008-gt-2026-n7a4', 'Peugeot 2008 GT 0 km azul', ['vista delantera', 'interior, tablero']),
     descripcion:
       'SUV compacto con motor turbo y caja automática CVT. Entrega inmediata, con garantía oficial.',
     equipamiento: [
@@ -388,7 +378,7 @@ export const autos: Auto[] = [
     moneda: 'ARS',
     estado: 'disponible',
     destacado: false,
-    fotos: fotos('renault-kangoo-furgon-confort-2021-t5y1', 'Renault Kangoo Furgón 2021 blanco', 4),
+    fotos: fotos('renault-kangoo-furgon-confort-2021-t5y1', 'Renault Kangoo Furgón 2021 blanco', ['vista delantera', 'vista trasera']),
     descripcion:
       'Utilitario con puerta lateral corrediza, listo para trabajar. Mecánica revisada.',
     equipamiento: [
@@ -416,7 +406,7 @@ export const autos: Auto[] = [
     moneda: 'ARS',
     estado: 'disponible',
     destacado: false,
-    fotos: fotos('toyota-yaris-xls-sedan-2021-v8c3', 'Toyota Yaris Sedán XLS 2021 plata', 5),
+    fotos: fotos('toyota-yaris-xls-sedan-2021-v8c3', 'Toyota Yaris Sedán XLS 2021 plata', ['vista delantera', 'vista trasera']),
     descripcion:
       'Sedán automático, económico y confiable. Services en concesionario oficial.',
     equipamiento: [
@@ -438,13 +428,13 @@ export const autos: Auto[] = [
     combustible: 'nafta',
     transmision: 'manual',
     carroceria: 'suv',
-    color: 'Naranja',
+    color: 'Plata',
     condicion: 'usado',
     precio: 18900000,
     moneda: 'ARS',
     estado: 'disponible',
     destacado: false,
-    fotos: fotos('renault-duster-intens-2020-l4p6', 'Renault Duster Intens 2020 naranja', 5),
+    fotos: fotos('renault-duster-intens-2020-l4p6', 'Renault Duster Intens 2020 plata', ['vista delantera']),
     descripcion:
       'SUV robusto y espacioso, con buen despeje para caminos de tierra. Cubiertas en buen estado.',
     equipamiento: [
@@ -472,7 +462,7 @@ export const autos: Auto[] = [
     moneda: 'ARS',
     estado: 'vendido',
     destacado: false,
-    fotos: fotos('toyota-etios-xls-2019-q2w5', 'Toyota Etios XLS 2019 blanco', 4),
+    fotos: fotos('toyota-etios-xls-2019-q2w5', 'Toyota Etios XLS 2019 blanco', ['vista delantera']),
     descripcion:
       'Hatchback económico y fácil de mantener.',
     equipamiento: [

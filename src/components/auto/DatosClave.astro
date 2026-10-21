@@ -2,19 +2,21 @@
 import type { Auto } from '../../schema/auto';
 import { numero } from '../../lib/formato';
 import { combustibles, transmisiones } from '../../lib/etiquetas';
+import Icono from '../ui/Icono.astro';
 
 interface Props { auto: Auto }
 const { auto } = Astro.props;
 const datos = [
-  ['Año', String(auto.anio)],
-  ['Kilómetros', numero(auto.km)],
-  ['Combustible', combustibles[auto.combustible]],
-  ['Caja', transmisiones[auto.transmision]],
-];
+  ['calendario', 'Año', String(auto.anio)],
+  ['ruta', 'Kilómetros', numero(auto.km)],
+  ['combustible', 'Combustible', combustibles[auto.combustible]],
+  ['caja', 'Caja', transmisiones[auto.transmision]],
+] as const;
 ---
 <dl class="datos">
-  {datos.map(([rotulo, valor]) => (
+  {datos.map(([icono, rotulo, valor]) => (
     <div class="dato">
+      <Icono nombre={icono} />
       <dt>{rotulo}</dt>
       <dd>{valor}</dd>
     </div>

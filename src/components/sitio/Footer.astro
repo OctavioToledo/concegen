@@ -1,7 +1,9 @@
 ---
+// Banda carbón: fila de marcas arriba y cuatro columnas de texto plano.
 import { agencia, destinos } from '../../lib/agencia';
 import { whatsappUrl } from '../../lib/whatsapp';
 import { mensajes } from '../../config/mensajes';
+import { marcasYModelos } from '../../lib/stock';
 import Horario from './Horario.astro';
 import CreditoDevott from './CreditoDevott.astro';
 
@@ -11,31 +13,45 @@ const listaRedes = [
   ['Facebook', redes.facebook],
   ['TikTok', redes.tiktok],
 ].filter(([, url]) => url) as [string, string][];
+const marcas = marcasYModelos();
 ---
 <footer class="footer">
-  <div class="contenedor footer-grilla">
-    <div class="pila">
-      <p class="ancho" style="font-size: var(--t-h2)">{agencia.nombre}</p>
-      <p>{contacto.direccion}</p>
-      <Horario />
-    </div>
-    <nav aria-label="Pie" class="pila-chica">
-      <h2 class="rotulo">Secciones</h2>
-      <div class="footer-links">
-        {destinos().map((d) => <a href={d.href}>{d.texto}</a>)}
-      </div>
+  <div class="contenedor">
+    <nav aria-label="Marcas" class="footer-marcas">
+      {marcas.map((m) => <a href={`/stock?marca=${m.slug}`}>{m.nombre}</a>)}
     </nav>
-    <div class="pila-chica">
-      <h2 class="rotulo">Contacto</h2>
-      <div class="footer-links">
-        <a href={whatsappUrl(contacto.whatsapp, mensajes.general({ agencia: agencia.nombre }))} target="_blank" rel="noopener" data-wa-origen="contacto">WhatsApp</a>
-        <a href={`tel:${contacto.telefono.replace(/\D/g, '')}`}>{contacto.telefono}</a>
-        {contacto.email && <a href={`mailto:${contacto.email}`}>{contacto.email}</a>}
-        {listaRedes.map(([nombre, url]) => <a href={url} rel="noopener">{nombre}</a>)}
+    <div class="footer-grilla">
+      <div class="pila-chica">
+        <h2 class="footer-titulo">{agencia.nombre}</h2>
+        <p>{contacto.direccion}</p>
+        <Horario />
+      </div>
+      <nav aria-label="Secciones" class="pila-chica">
+        <h2 class="footer-titulo">Secciones</h2>
+        <div class="footer-links">
+          <a href="/">Inicio</a>
+          {destinos().map((d) => <a href={d.href}>{d.texto}</a>)}
+        </div>
+      </nav>
+      <div class="pila-chica">
+        <h2 class="footer-titulo">Contacto</h2>
+        <div class="footer-links">
+          <a href={whatsappUrl(contacto.whatsapp, mensajes.general({ agencia: agencia.nombre }))} target="_blank" rel="noopener" data-wa-origen="contacto">WhatsApp</a>
+          <a href={`tel:${contacto.telefono.replace(/\D/g, '')}`}>{contacto.telefono}</a>
+          {contacto.email && <a href={`mailto:${contacto.email}`}>{contacto.email}</a>}
+        </div>
+      </div>
+      <div class="pila-chica">
+        <h2 class="footer-titulo">Seguinos</h2>
+        <div class="footer-links">
+          {listaRedes.map(([nombre, url]) => <a href={url} rel="noopener">{nombre}</a>)}
+          <a href="/creditos">Créditos de las fotos</a>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="contenedor" style="margin-top: var(--e-7)">
-    <CreditoDevott />
+    <div class="footer-legal">
+      <p>Las fotos son ilustrativas.</p>
+      <CreditoDevott />
+    </div>
   </div>
 </footer>

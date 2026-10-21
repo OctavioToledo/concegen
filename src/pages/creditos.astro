@@ -1,0 +1,27 @@
+---
+// Las fotos de la demo son de Wikimedia Commons con licencias libres: acá va la atribución que piden.
+import Base from '../layouts/Base.astro';
+import creditos from '../data/creditos.json';
+---
+<Base titulo="Créditos de las fotos" descripcion="Autoría y licencia de las fotos usadas en el sitio.">
+  <div class="cabecera-pagina">
+    <div class="contenedor">
+      <h1>Créditos de las fotos</h1>
+      <p>Las fotos de los autos son ilustrativas y provienen de Wikimedia Commons, con las licencias indicadas.</p>
+    </div>
+  </div>
+  <div class="contenedor seccion-chica">
+    <table class="tabla tabla-creditos">
+      <thead><tr><th scope="col">Foto</th><th scope="col">Autor</th><th scope="col">Licencia</th></tr></thead>
+      <tbody>
+        {creditos.map((c) => (
+          <tr>
+            <td><a href={c.fuente} rel="noopener">{c.titulo.replace(/^File:/, '')}</a></td>
+            <td>{c.autor}</td>
+            <td>{c.licencia}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Base>

@@ -10,6 +10,7 @@ import BarraFicha from '../../components/auto/BarraFicha.astro';
 import Parecidos from '../../components/auto/Parecidos.astro';
 import BotonWhatsApp from '../../components/ui/BotonWhatsApp.astro';
 import Icono from '../../components/ui/Icono.astro';
+import Horario from '../../components/sitio/Horario.astro';
 import { agencia, absoluta } from '../../lib/agencia';
 import { todos, parecidos } from '../../lib/stock';
 import { whatsappUrl, mensajeFicha } from '../../lib/whatsapp';
@@ -42,24 +43,28 @@ const imagen = ogImagenAuto(auto);
 >
   <div class="ficha-contenido">
     <div class="contenedor ficha-nav">
-      <a href="/stock" data-volver><Icono nombre="atras" /><span>Ver todo el stock</span></a>
-      <button type="button" data-compartir data-url={link} data-titulo={tituloAuto(auto)} hidden>
+      <nav class="migas" aria-label="Ruta">
+        <a href="/">Inicio</a><span aria-hidden="true">/</span>
+        <a href="/stock" data-volver>Stock</a><span aria-hidden="true">/</span>
+        <span aria-current="page">{nombre(auto)}</span>
+      </nav>
+      <button type="button" class="boton boton-chico" data-compartir data-url={link} data-titulo={tituloAuto(auto)} hidden>
         <Icono nombre="compartir" />Compartir
       </button>
     </div>
 
     <div class:list={['contenedor ficha', vendido && 'es-vendido']}>
-      <div>
+      <div class="ficha-galeria">
         <Galeria auto={auto} />
       </div>
 
-      <div class="ficha-info">
+      <aside class="ficha-panel" aria-label="Precio y consulta">
         <div class="ficha-titulo">
           <h1>{nombre(auto)}</h1>
           <p class="suave">{auto.version}</p>
         </div>
 
-        <div><Cartel auto={auto} grande /></div>
+        <Cartel auto={auto} grande />
 
         {reservado && <p class="aviso-estado">Este auto está reservado. Consultanos si se libera.</p>}
         {vendido && <p class="aviso-estado aviso-estado--vendido">Este auto ya se vendió. Te mostramos otros parecidos.</p>}
@@ -81,7 +86,11 @@ const imagen = ogImagenAuto(auto);
             </BotonWhatsApp>
           )}
         </div>
-      </div>
+
+        <div class="ficha-atencion">
+          <Horario compacto />
+        </div>
+      </aside>
     </div>
 
     {vendido && (
@@ -90,12 +99,12 @@ const imagen = ogImagenAuto(auto);
       </div>
     )}
 
-    <div class="contenedor seccion dos-columnas">
-      <TablaSpecs auto={auto} />
-      <div class="pila-grande">
-        <Equipamiento items={auto.equipamiento} />
+    <div class="contenedor seccion ficha-detalle">
+      <div class="bloque"><TablaSpecs auto={auto} /></div>
+      <div class="ficha-detalle-lado">
+        {auto.equipamiento.length > 0 && <div class="bloque"><Equipamiento items={auto.equipamiento} /></div>}
         {auto.descripcion && (
-          <section aria-labelledby="desc-titulo" class="pila">
+          <section aria-labelledby="desc-titulo" class="bloque pila">
             <h2 id="desc-titulo">Descripción</h2>
             <p>{auto.descripcion}</p>
           </section>
@@ -117,15 +126,15 @@ const imagen = ogImagenAuto(auto);
   import { iniciarCompartir } from '../../scripts/compartir';
   iniciarCompartir();
 
-  // «Volver a tu búsqueda» recuerda los filtros con los que se llegó. Si se entró directo, «Ver todo el stock».
+  // «Volver a tu búsqueda» recuerda los filtros con los que se llegó.
   try {
     const busqueda = sessionStorage.getItem('busqueda');
     const volver = document.querySelector<HTMLAnchorElement>('[data-volver]');
-    if (busqueda !== null && volver) {
+    if (busqueda && volver) {
       volver.href = `/stock${busqueda}`;
-      volver.querySelector('span')!.textContent = 'Volver a tu búsqueda';
+      volver.textContent = 'Tu búsqueda';
     }
   } catch {
-    // modo privado: queda «Ver todo el stock»
+    // modo privado: queda «Stock»
   }
 </script>

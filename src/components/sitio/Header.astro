@@ -1,11 +1,10 @@
 ---
-// Logo (o el nombre compuesto en ancho), WhatsApp compacto y menú. El header no queda fijo.
+// Barra plana, sin sombra ni borde: marca con la ciudad a la izquierda, links de texto a la derecha.
 import { Image } from 'astro:assets';
 import { agencia, destinos } from '../../lib/agencia';
 import { fotoAgencia } from '../../lib/fotos';
 import { whatsappUrl } from '../../lib/whatsapp';
 import { mensajes } from '../../config/mensajes';
-import BotonWhatsApp from '../ui/BotonWhatsApp.astro';
 import Icono from '../ui/Icono.astro';
 import Menu from './Menu.astro';
 
@@ -15,21 +14,24 @@ const href = whatsappUrl(agencia.contacto.whatsapp, mensajes.general({ agencia: 
 ---
 <header class="header">
   <div class="contenedor header-fila">
-    <a href="/" class="marca-agencia ancho" aria-label={`${agencia.nombre}, inicio`}>
+    <a href="/" class="marca-agencia" aria-label={`${agencia.nombre}, inicio`}>
       {logo && agencia.logo
         ? typeof logo === 'string'
           ? <Image src={logo} alt={agencia.logo.alt} inferSize />
-          : <Image src={logo} alt={agencia.logo.alt} height={72} />
-        : agencia.nombre}
+          : <Image src={logo} alt={agencia.logo.alt} height={64} />
+        : <span class="marca-texto">{agencia.nombre}</span>}
+      <span class="marca-lema">{agencia.ciudad}</span>
     </a>
     <nav class="nav-escritorio" aria-label="Principal">
       {destinos().map((d) => (
         <a href={d.href} aria-current={ruta.startsWith(d.href) ? 'page' : undefined}>{d.texto}</a>
       ))}
     </nav>
-    <BotonWhatsApp href={href} variante="compacto" origen="header">WhatsApp</BotonWhatsApp>
+    <a class="header-wa" href={href} target="_blank" rel="noopener" data-wa-origen="header" aria-label="Escribinos por WhatsApp">
+      <Icono nombre="whatsapp" /><span>WhatsApp</span>
+    </a>
     <button type="button" class="boton-menu" data-abrir="menu" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu">
-      <Icono nombre="menu" />Menú
+      Menú
     </button>
   </div>
 </header>

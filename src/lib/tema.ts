@@ -72,7 +72,8 @@ export type Tema = Record<string, string>;
 
 export function derivarTema(c: Colores): Tema {
   const claro = esClaro(c.fondo);
-  const tinta = claro ? ASFALTO : NIEVE;
+  // Si el primario es casi negro (o casi blanco sobre fondo oscuro), es también el color del texto.
+  const tinta = contraste(c.primario, c.fondo) >= 12 ? c.primario.toUpperCase() : claro ? ASFALTO : NIEVE;
   const superficie = claro ? BLANCO : mezclar(c.fondo, BLANCO, 0.06);
 
   // Tinta suave: mezcla al 35 % hacia el fondo, y se acerca a la tinta hasta llegar a 4,5:1
@@ -92,11 +93,15 @@ export function derivarTema(c: Colores): Tema {
     '--c-tinta': tinta,
     '--c-tinta-suave': suave,
     '--c-borde': mezclar(c.fondo, tinta, 0.14),
+    // Banda alternativa, un paso arriba del fondo.
+    '--c-banda': mezclar(c.fondo, tinta, 0.055),
     '--c-primario': c.primario.toUpperCase(),
     '--c-primario-texto': textoSobre(c.primario, tinta === NIEVE ? ASFALTO : tinta),
     '--c-primario-suave': mezclar(c.fondo, c.primario, 0.08),
+    // Para la franja superior, el footer y los velos sobre fotos.
+    '--c-primario-oscuro': mezclar(c.primario, '#000000', 0.45),
     '--c-acento': c.acento.toUpperCase(),
-    '--c-acento-texto': textoSobre(c.acento, ASFALTO),
+    '--c-acento-texto': textoSobre(c.acento, tinta === NIEVE ? ASFALTO : tinta),
     '--c-foco': foco,
   };
 }
@@ -116,6 +121,7 @@ export function chequearContraste(tema: Tema): Aviso[] {
     ['tinta sobre primario suave', v('--c-tinta'), v('--c-primario-suave'), 4.5],
     ['foco contra fondo', v('--c-foco'), v('--c-fondo'), 3],
     ['primario contra fondo (chips activos)', v('--c-primario'), v('--c-fondo'), 3],
+    ['blanco sobre primario oscuro', '#FFFFFF', v('--c-primario-oscuro'), 4.5],
   ];
   return pares
     .map(([par, a, b, minimo]) => ({ par, valor: Math.round(contraste(a, b) * 100) / 100, minimo }))

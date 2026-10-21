@@ -5,7 +5,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  scroll-padding-top: 72px;
+  scroll-padding-top: calc(var(--alto-header) + 16px);
 }
 
 body {
@@ -17,7 +17,7 @@ body {
   color: var(--c-tinta);
   font-family: var(--fuente);
   font-size: var(--t-base);
-  line-height: 1.55;
+  line-height: 1.6;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
 }
@@ -28,19 +28,19 @@ h1, h2, h3, h4, p, ul, ol, dl, dd, figure { margin: 0; }
 ul[class], ol[class] { list-style: none; padding: 0; }
 
 h1, h2, h3, .ancho {
-  font-stretch: 112%;
   font-weight: 700;
-  line-height: 1.12;
-  letter-spacing: -0.01em;
+  line-height: 1.25;
   text-wrap: balance;
 }
+/* Títulos grandes: peso 300, la firma del diseño. Nunca en negrita. */
+h1, h2, .display { font-weight: 300; line-height: 1.2; letter-spacing: -0.005em; }
+.display { font-size: var(--t-display); }
 h1 { font-size: var(--t-h1); }
 h2 { font-size: var(--t-h2); }
 h3 { font-size: var(--t-h3); }
 
 .angosto {
-  font-stretch: 75%;
-  font-weight: 800;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
   line-height: 1.05;
   letter-spacing: 0;
@@ -66,8 +66,8 @@ button { cursor: pointer; }
 
 :focus { outline: none; }
 :focus-visible {
-  outline: 3px solid var(--c-foco);
-  outline-offset: 2px;
+  outline: 2px solid var(--c-foco);
+  outline-offset: 3px;
 }
 
 ::selection { background: var(--c-primario); color: var(--c-primario-texto); }

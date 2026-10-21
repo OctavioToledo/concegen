@@ -35,7 +35,7 @@ const h = (type: string, style: Record<string, unknown>, ...children: (Nodo | st
 });
 
 async function fotoDataUri(ruta: string, ancho: number, alto: number, gris = false): Promise<string> {
-  let img = sharp(join(process.cwd(), ruta)).resize(ancho, alto, { fit: 'cover' });
+  let img = sharp(join(process.cwd(), ruta)).resize(ancho, alto, { fit: 'cover', position: sharp.strategy.attention });
   if (gris) img = img.grayscale();
   const buf = await img.jpeg({ quality: 82 }).toBuffer();
   return `data:image/jpeg;base64,${buf.toString('base64')}`;
@@ -64,7 +64,7 @@ function cartel(a: Auto): Nodo {
   const valor = vendido ? null : a.precio === null ? 'Consultar precio' : precio(a.precio, a.moneda);
   return h('div', {
     position: 'absolute', left: 40, bottom: 40, flexDirection: 'column', background: '#FFFFFF',
-    borderRadius: 3, boxShadow: '0 3px 8px rgba(0,0,0,0.3)', minWidth: 340, overflow: 'hidden',
+    border: '2px solid #262626', minWidth: 340, overflow: 'hidden',
   },
     h('div', { background: fondo, color: texto, padding: '8px 22px', fontFamily: 'Archivo', fontWeight: 600, fontSize: 26 }, rotulo),
     h('div', { flexDirection: 'column', padding: '10px 22px 18px', color: '#1B2129' },

@@ -1,24 +1,38 @@
 ---
-// Financiación y Tomamos tu usado. Solo aparecen si su switch está activo.
+// Financiación y Tomamos tu usado: foto limpia arriba, texto y link abajo. Solo si su switch está activo.
 import { agencia } from '../../lib/agencia';
+import { destacados, disponibles } from '../../lib/stock';
+import { fotoAuto } from '../../lib/fotos';
+import Foto from '../ui/Foto.astro';
 
 const { financiacion, tomaUsados } = agencia.secciones;
+const conFoto = disponibles();
+const fotoFin = destacados().find((a) => a.condicion === '0km') ?? conFoto[0];
+const fotoUsado = conFoto.find((a) => a.condicion === 'usado' && a.id !== fotoFin?.id && a.fotos.length > 1) ?? conFoto[1];
+const SIZES = '(min-width: 900px) 600px, 100vw';
 ---
 {(financiacion || tomaUsados) && (
-  <section class="contenedor seccion servicios" aria-label="Servicios">
-    {financiacion && (
-      <div class="servicio servicio--primario">
-        <h2>Financiación</h2>
-        <p>Llevate tu auto con un anticipo y el resto en cuotas. Te armamos una propuesta por WhatsApp.</p>
-        <a class="boton" href="/financiacion">Consultar financiación</a>
-      </div>
-    )}
-    {tomaUsados && (
-      <div class="servicio servicio--superficie">
-        <h2>Tomamos tu usado</h2>
-        <p>Usalo como parte de pago. Contanos qué auto tenés y te pasamos una cotización.</p>
-        <a class="boton" href="/tomamos-tu-usado">Cotizar mi usado</a>
-      </div>
-    )}
+  <section class="contenedor seccion" aria-labelledby="servicios-titulo">
+    <div class="titulo-seccion">
+      <h2 id="servicios-titulo">Más fácil de lo que pensás</h2>
+    </div>
+    <div class="servicios">
+      {financiacion && fotoFin && (
+        <article class="servicio">
+          <Foto src={fotoAuto(fotoFin.fotos[0].src)!} alt="" sizes={SIZES} />
+          <h3>Financiación</h3>
+          <p>Llevate tu auto con un anticipo y el resto en cuotas. Te armamos una propuesta por WhatsApp.</p>
+          <a class="flecha" href="/financiacion">Consultar financiación</a>
+        </article>
+      )}
+      {tomaUsados && fotoUsado && (
+        <article class="servicio">
+          <Foto src={fotoAuto(fotoUsado.fotos[fotoUsado.fotos.length - 1].src)!} alt="" sizes={SIZES} />
+          <h3>Tomamos tu usado</h3>
+          <p>Usalo como parte de pago. Contanos qué auto tenés y te pasamos una cotización.</p>
+          <a class="flecha" href="/tomamos-tu-usado">Cotizar mi usado</a>
+        </article>
+      )}
+    </div>
   </section>
 )}

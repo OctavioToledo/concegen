@@ -8,12 +8,12 @@ const { autos, titulo = 'Autos parecidos' } = Astro.props;
 ---
 {autos.length > 0 && (
   <section aria-labelledby="parecidos-titulo">
-    <div class="cabecera-seccion">
+    <div class="titulo-seccion">
       <h2 id="parecidos-titulo">{titulo}</h2>
-      <a href="/stock" class="chico">Ver todo el stock</a>
     </div>
     <div class="carrusel">
       {autos.map((a) => <TarjetaAuto auto={a} sizes={SIZES.carrusel} />)}
     </div>
+    <p class="centrado"><a class="flecha" href="/stock">Ver todo el stock</a></p>
   </section>
 )}

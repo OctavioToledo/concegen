@@ -18,11 +18,11 @@ const franjas = (f: [string, string][]) => f.map(([a, c]) => `${hora(a)} a ${hor
 <div class="pila-chica">
   <p class="horario-estado" data-horario={JSON.stringify(agencia.horarios)} data-zona={agencia.zonaHoraria} hidden></p>
   {!compacto && (
-    <div class="horarios chico">
+    <dl class="horarios chico">
       {agencia.horarios.map((h) => (
-        <div><span>{dias(h.dias)}</span><span>{franjas(h.franjas)}</span></div>
+        <div><dt>{dias(h.dias)}</dt><dd>{franjas(h.franjas)}</dd></div>
       ))}
-    </div>
+    </dl>
   )}
   {compacto && <p class="chico suave">{agencia.horarios.map((h) => `${dias(h.dias)}, ${franjas(h.franjas)}`).join('. ')}.</p>}
 </div>

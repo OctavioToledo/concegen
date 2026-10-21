@@ -25,14 +25,16 @@
   --fuente: 'Archivo', 'Archivo respaldo', system-ui, sans-serif;
 
   /* Tipo: fluido entre 375 y 1240 px */
-  --t-display: clamp(2.25rem, 1.5997rem + 2.7746vw, 3.75rem);
+  --t-display: clamp(2.5rem, 1.9581rem + 2.3121vw, 3.75rem);
   --t-h1: clamp(1.5rem, 1.1749rem + 1.3873vw, 2.25rem);
-  --t-h2: clamp(1.3125rem, 1.2312rem + 0.3468vw, 1.5rem);
-  --t-h3: 1.125rem;
+  --t-h2: clamp(2rem, 1.6749rem + 1.3873vw, 2.75rem);
+  --t-h3: 1.1875rem;
+  --t-portada: clamp(2.5rem, 1.6329rem + 3.6994vw, 4.5rem);
   --t-precio-xl: clamp(2.25rem, 1.9249rem + 1.3873vw, 3rem);
   --t-precio: 1.5rem;
   --t-dato: 1.3125rem;
   --t-base: 1rem;
+  --t-cuerpo: 1.125rem;
   --t-chico: 0.875rem;
   --t-rotulo: 0.8125rem;
 
@@ -48,19 +50,24 @@
   --e-9: 6rem;
   --e-seccion: var(--e-8);
   --margen: 16px;
-  --contenedor: 1240px;
+  --contenedor: 1200px;
 
   /* Radios según jerarquía */
-  --r-cartel: 2px;
-  --r-foto: 6px;
-  --r-control: 10px;
-  --r-chip: 999px;
-  --r-panel: 16px;
+  --r-cartel: 0;
+  --r-foto: 0;
+  --r-control: 0;
+  --r-chip: 0;
+  --r-panel: 0;
+  --r-tarjeta: 0;
+  --r-bloque: 0;
 
   /* Elevación: solo cartel, flotante y paneles */
   --sombra-cartel: 0 1px 0 rgb(0 0 0 / 0.06), 0 2px 3px rgb(0 0 0 / 0.2);
   --sombra-flotante: 0 4px 12px rgb(0 0 0 / 0.22);
   --sombra-panel: 0 -6px 24px rgb(0 0 0 / 0.18);
+  --sombra-tarjeta: 0 12px 32px -8px rgb(15 35 55 / 0.22);
+  --sombra-buscador: 0 18px 48px -12px rgb(15 35 55 / 0.35);
+  --sombra-header: 0 1px 0 rgb(15 35 55 / 0.08), 0 4px 16px -8px rgb(15 35 55 / 0.18);
 
   /* Movimiento */
   --m-rapido: 120ms;
@@ -76,6 +83,7 @@
   --vendido: #1b2129;
 
   --toque: 44px;
+  --alto-header: 0px;
 }
 
 @media (min-width: 600px) {

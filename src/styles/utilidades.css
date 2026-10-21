@@ -37,32 +37,3 @@
   justify-content: space-between;
   gap: var(--e-3);
 }
-
-.cabecera-seccion {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--e-4);
-  margin-block-end: var(--e-5);
-}
-
-/* Carrusel con scroll-snap nativo: asoma la tarjeta siguiente. */
-.carrusel {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: min(78%, 300px);
-  gap: var(--e-4);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--margen);
-  padding-inline: var(--margen);
-  margin-inline: calc(-1 * var(--margen));
-  padding-block-end: var(--e-6);
-  scrollbar-width: thin;
-}
-.carrusel > * { scroll-snap-align: start; }
-
-@media (min-width: 1240px) {
-  .carrusel { grid-auto-columns: calc((100% - 3 * var(--e-4)) / 4); margin-inline: 0; padding-inline: 0; }
-}
