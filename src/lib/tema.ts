@@ -93,15 +93,19 @@ export function derivarTema(c: Colores): Tema {
     '--c-tinta': tinta,
     '--c-tinta-suave': suave,
     '--c-borde': mezclar(c.fondo, tinta, 0.14),
-    // Banda alternativa, un paso arriba del fondo.
-    '--c-banda': mezclar(c.fondo, tinta, 0.055),
+    // Banda alternativa: un tinte frío del primario, apenas un paso arriba del fondo.
+    '--c-banda': mezclar(c.fondo, c.primario, 0.045),
+    '--c-banda-fuerte': mezclar(c.fondo, c.primario, 0.1),
     '--c-primario': c.primario.toUpperCase(),
     '--c-primario-texto': textoSobre(c.primario, tinta === NIEVE ? ASFALTO : tinta),
     '--c-primario-suave': mezclar(c.fondo, c.primario, 0.08),
     // Para la franja superior, el footer y los velos sobre fotos.
-    '--c-primario-oscuro': mezclar(c.primario, '#000000', 0.45),
+    '--c-primario-oscuro': mezclar(c.primario, '#000000', 0.3),
     '--c-acento': c.acento.toUpperCase(),
     '--c-acento-texto': textoSobre(c.acento, tinta === NIEVE ? ASFALTO : tinta),
+    '--c-acento-suave': mezclar(c.fondo, c.acento, 0.16),
+    // Texto del primario sobre fondos claros cuando el primario es muy claro.
+    '--c-primario-tinta': contraste(c.primario, c.fondo) >= 4.5 ? c.primario.toUpperCase() : tinta,
     '--c-foco': foco,
   };
 }
@@ -122,6 +126,8 @@ export function chequearContraste(tema: Tema): Aviso[] {
     ['foco contra fondo', v('--c-foco'), v('--c-fondo'), 3],
     ['primario contra fondo (chips activos)', v('--c-primario'), v('--c-fondo'), 3],
     ['blanco sobre primario oscuro', '#FFFFFF', v('--c-primario-oscuro'), 4.5],
+    ['primario sobre banda', v('--c-primario-tinta'), v('--c-banda'), 4.5],
+    ['tinta sobre acento suave', v('--c-tinta'), v('--c-acento-suave'), 4.5],
   ];
   return pares
     .map(([par, a, b, minimo]) => ({ par, valor: Math.round(contraste(a, b) * 100) / 100, minimo }))

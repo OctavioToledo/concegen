@@ -24,7 +24,7 @@ const SIZES = '100vw';
             <Foto src={fotoAuto(a.fotos[0].src)!} alt="" sizes={SIZES} proporcion="libre" prioridad={i === 0} anchos={[480, 768, 1080, 1440, 1920]} class="slide-foto" />
           </a>
           <div class="slide-texto contenedor">
-            <p class="slide-condicion">{a.condicion === '0km' ? '0 km' : `Usado, ${a.anio}`}</p>
+            <p class:list={['tag', `tag--${a.condicion}`]}>{a.condicion === '0km' ? '0 km' : `Usado, ${a.anio}`}</p>
             <h2 class="slide-nombre">{nombre(a)}</h2>
             <p class="slide-version">
               {a.version}

@@ -50,14 +50,14 @@ const atributos = datos
     <Foto src={fotoAuto(portada.src)!} alt="" sizes={sizes} inmediata={inmediata} prioridad={prioridad} transicion={datos ? `foto-${auto.slug}` : undefined} />
   </a>
   <div class="tarjeta-cuerpo">
-    <p class:list={['tarjeta-condicion', `tarjeta-condicion--${vendido ? 'vendido' : reservado ? 'reservado' : auto.condicion}`]}>{condicion}</p>
+    <p class:list={['tarjeta-condicion', 'tag', `tag--${vendido ? 'vendido' : reservado ? 'reservado' : auto.condicion}`]}>{condicion}</p>
     <Titulo class="tarjeta-nombre"><a href={href}>{nombre(auto)}<span class="sr">, {condicion.toLowerCase()}</span></a></Titulo>
     <p class="tarjeta-version">{auto.version}</p>
     <ul class="specs" aria-label="Datos">
-      <li>{auto.anio}</li>
-      <li>{auto.condicion === '0km' ? '0 km' : km(auto.km)}</li>
-      <li>{transmisiones[auto.transmision]}</li>
-      <li>{combustibles[auto.combustible]}</li>
+      <li><Icono nombre="calendario" />{auto.anio}</li>
+      <li><Icono nombre="ruta" />{auto.condicion === '0km' ? '0 km' : km(auto.km)}</li>
+      <li><Icono nombre="caja" />{transmisiones[auto.transmision]}</li>
+      <li><Icono nombre="combustible" />{combustibles[auto.combustible]}</li>
     </ul>
     <div class="tarjeta-pie">
       <p class="tarjeta-precio">

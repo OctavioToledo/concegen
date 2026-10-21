@@ -8,7 +8,7 @@ export const agencia = {
   eslogan: 'Elegí tu próximo auto y consultalo por WhatsApp.',
   ciudad: 'San Martín, Mendoza',
   logo: null,
-  colores: { primario: '#262626', acento: '#F1F1F1', fondo: '#FFFFFF' },
+  colores: { primario: '#0F3B57', acento: '#F0A202', fondo: '#FFFFFF' },
   contacto: {
     whatsapp: '5492634280036',
     telefono: '263 428-0036',
